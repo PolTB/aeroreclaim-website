@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+
+<!-- Perplexity Computer Attribution — SEO Meta Tags -->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rutas de vuelo con derecho a compensación | AeroReclaim</title>
+<meta name="description" content="Consulta las 50 rutas de vuelo con mayor número de reclamaciones en España. Comprueba si tu vuelo es elegible para compensación.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://aeroreclaim.com/rutas/">
+<link rel="alternate" hreflang="es" href="https://aeroreclaim.com/rutas/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Rutas de vuelo con derecho a compensación | AeroReclaim">
+<meta property="og:description" content="Consulta las 50 rutas con mayor número de reclamaciones. Comprueba si tu vuelo es elegible.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aeroreclaim.com/rutas/">
+<meta property="og:site_name" content="AeroReclaim">
+<meta property="og:locale" content="es_ES">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../base.css">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../components.css">
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-N4NDPFXP6N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-N4NDPFXP6N');
+</script>
+
+<!-- JSON-LD Breadcrumb -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://aeroreclaim.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Rutas", "item": "https://aeroreclaim.com/rutas/"}
+  ],
+  "creator": {
+    "@type": "SoftwareApplication",
+    "name": "Perplexity Computer",
+    "url": "https://www.perplexity.ai/computer"
+  }
+}
+</script>
+
+<style>
+  .breadcrumb { padding: var(--space-4) 0; font-size: var(--text-xs); color: var(--color-text-secondary); }
+  .breadcrumb a { color: var(--color-primary); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb__sep { margin: 0 var(--space-2); opacity: 0.5; }
+
+  .routes-hero { padding: var(--space-16) 0 var(--space-8); text-align: center; }
+  .routes-hero__title { font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif); font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: var(--space-3); color: var(--color-text-primary); }
+  .routes-hero__desc { font-size: var(--text-base, 1rem); color: var(--color-text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+  .origin-group { margin-bottom: var(--space-12); }
+  .origin-group__title { font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif); font-size: clamp(1.125rem, 2.5vw, 1.5rem); font-weight: 700; margin-bottom: var(--space-4); color: var(--color-text-primary); padding-bottom: var(--space-2); border-bottom: 2px solid var(--color-primary); display: inline-block; }
+  .origin-group__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
+
+  .route-card { display: block; padding: var(--space-5); border-radius: var(--radius-md, 8px); background: var(--color-bg-primary, #fff); border: 1px solid var(--color-border, oklch(0.9 0 0)); text-decoration: none; transition: all 180ms ease; }
+  .route-card:hover { border-color: var(--color-primary); box-shadow: 0 4px 12px oklch(0 0 0 / 0.08); transform: translateY(-2px); }
+  .route-card__cities { font-weight: 700; font-size: var(--text-base, 1rem); color: var(--color-text-primary); margin-bottom: var(--space-2); }
+  .route-card__meta { display: flex; gap: var(--space-3); margin-bottom: var(--space-2); }
+  .route-card__distance { font-size: var(--text-xs); color: var(--color-text-secondary); background: var(--color-surface-secondary, var(--color-bg-secondary)); padding: 2px 8px; border-radius: 4px; }
+  .route-card__comp { font-size: var(--text-xs); color: var(--color-primary); font-weight: 600; background: oklch(0.95 0.03 250); padding: 2px 8px; border-radius: 4px; }
+  [data-theme="dark"] .route-card__comp { background: oklch(0.25 0.03 250); }
+  .route-card__airlines { font-size: var(--text-xs); color: var(--color-text-secondary); }
+</style>
+</head>
+<body>
+
+<!-- Skip to content -->
+<a href="#main" class="skip-link sr-only">Ir al contenido principal</a>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="header__inner">
+    <a href="../" class="logo" aria-label="AeroReclaim - Inicio">
+      <svg class="logo__mark" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M18 3L5 8.5v9c0 7.5 5.5 14 13 16 7.5-2 13-8.5 13-16v-9L18 3z" fill="var(--color-primary)" fill-opacity="0.08" stroke="var(--color-primary)" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M12 18.5l4 4 8-9" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M24 10l-5 3v-2.5l5-3V10z" fill="var(--color-primary)" opacity="0.5"/>
+        <path d="M19 13l-7 4" stroke="var(--color-primary)" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+      </svg>
+      <span class="logo__text">AeroReclaim</span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Navegación principal">
+      <ul class="nav__list" role="list">
+        <li><a href="../#como-funciona" class="nav__link">Cómo funciona</a></li>
+        <li><a href="../#compensaciones" class="nav__link">Compensaciones</a></li>
+        <li><a href="../#opiniones" class="nav__link">Opiniones</a></li>
+        <li><a href="../#faq" class="nav__link">FAQ</a></li>
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="../#hero" class="btn btn--primary btn--sm header__cta">Comprobar mi vuelo</a>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <ul class="mobile-menu__list" role="list">
+      <li><a href="../#como-funciona" class="mobile-menu__link">Cómo funciona</a></li>
+      <li><a href="../#compensaciones" class="mobile-menu__link">Compensaciones</a></li>
+      <li><a href="../#opiniones" class="mobile-menu__link">Opiniones</a></li>
+      <li><a href="../#faq" class="mobile-menu__link">FAQ</a></li>
+      <li><a href="../#hero" class="btn btn--primary mobile-menu__cta">Comprobar mi vuelo</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- BREADCRUMB -->
+<div class="container">
+  <nav class="breadcrumb" aria-label="Migas de pan">
+    <a href="../">Inicio</a>
+    <span class="breadcrumb__sep">›</span>
+    <span>Rutas</span>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="routes-hero">
+  <div class="container">
+    <h1 class="routes-hero__title">Rutas de vuelo con derecho a compensación</h1>
+    <p class="routes-hero__desc">Consulta las 50 rutas más reclamadas en España. Selecciona tu ruta para conocer la compensación a la que tienes derecho.</p>
+  </div>
+</section>
+
+<!-- ROUTE LISTING -->
+<section class="section">
+  <div class="container">
+      <div class="origin-group">
+        <h2 class="origin-group__title">Vuelos desde Madrid</h2>
+        <div class="origin-group__grid">
+          <a href="madrid-barcelona.html" class="route-card">
+            <div class="route-card__cities">Madrid – Barcelona</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">505 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling, Ryanair</div>
+          </a>
+          <a href="madrid-palma-mallorca.html" class="route-card">
+            <div class="route-card__cities">Madrid – Palma de Mallorca</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">550 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling, Ryanair</div>
+          </a>
+          <a href="madrid-malaga.html" class="route-card">
+            <div class="route-card__cities">Madrid – Málaga</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">420 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling, Ryanair</div>
+          </a>
+          <a href="madrid-sevilla.html" class="route-card">
+            <div class="route-card__cities">Madrid – Sevilla</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">390 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling, Ryanair</div>
+          </a>
+          <a href="madrid-tenerife.html" class="route-card">
+            <div class="route-card__cities">Madrid – Tenerife</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.750 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair, Vueling</div>
+          </a>
+          <a href="madrid-gran-canaria.html" class="route-card">
+            <div class="route-card__cities">Madrid – Gran Canaria</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.770 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair, Vueling</div>
+          </a>
+          <a href="madrid-lanzarote.html" class="route-card">
+            <div class="route-card__cities">Madrid – Lanzarote</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.680 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair, Vueling</div>
+          </a>
+          <a href="madrid-fuerteventura.html" class="route-card">
+            <div class="route-card__cities">Madrid – Fuerteventura</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.700 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair</div>
+          </a>
+          <a href="madrid-bilbao.html" class="route-card">
+            <div class="route-card__cities">Madrid – Bilbao</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">395 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling</div>
+          </a>
+          <a href="madrid-valencia.html" class="route-card">
+            <div class="route-card__cities">Madrid – Valencia</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">305 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling, Ryanair</div>
+          </a>
+          <a href="madrid-ibiza.html" class="route-card">
+            <div class="route-card__cities">Madrid – Ibiza</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">585 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling, Ryanair</div>
+          </a>
+          <a href="madrid-santiago.html" class="route-card">
+            <div class="route-card__cities">Madrid – Santiago de Compostela</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">505 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling, Ryanair</div>
+          </a>
+          <a href="madrid-londres.html" class="route-card">
+            <div class="route-card__cities">Madrid – Londres</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.260 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, British Airways, Ryanair</div>
+          </a>
+          <a href="madrid-paris.html" class="route-card">
+            <div class="route-card__cities">Madrid – París</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.050 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Air France, Vueling</div>
+          </a>
+          <a href="madrid-roma.html" class="route-card">
+            <div class="route-card__cities">Madrid – Roma</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.365 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair, Vueling</div>
+          </a>
+          <a href="madrid-amsterdam.html" class="route-card">
+            <div class="route-card__cities">Madrid – Ámsterdam</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.480 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, KLM, Vueling</div>
+          </a>
+          <a href="madrid-berlin.html" class="route-card">
+            <div class="route-card__cities">Madrid – Berlín</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.870 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair, easyJet</div>
+          </a>
+          <a href="madrid-lisboa.html" class="route-card">
+            <div class="route-card__cities">Madrid – Lisboa</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">505 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, TAP, Ryanair</div>
+          </a>
+          <a href="madrid-milan.html" class="route-card">
+            <div class="route-card__cities">Madrid – Milán</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.180 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair, easyJet</div>
+          </a>
+          <a href="madrid-dublin.html" class="route-card">
+            <div class="route-card__cities">Madrid – Dublín</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.460 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Ryanair, Aer Lingus</div>
+          </a>
+          <a href="madrid-bruselas.html" class="route-card">
+            <div class="route-card__cities">Madrid – Bruselas</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.315 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Brussels Airlines, Ryanair</div>
+          </a>
+          <a href="madrid-nueva-york.html" class="route-card">
+            <div class="route-card__cities">Madrid – Nueva York</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">5.770 km</span>
+              <span class="route-card__comp">600€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Air Europa, American Airlines</div>
+          </a>
+          <a href="madrid-miami.html" class="route-card">
+            <div class="route-card__cities">Madrid – Miami</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">7.100 km</span>
+              <span class="route-card__comp">600€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Air Europa, American Airlines</div>
+          </a>
+          <a href="madrid-buenos-aires.html" class="route-card">
+            <div class="route-card__cities">Madrid – Buenos Aires</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">10.050 km</span>
+              <span class="route-card__comp">600€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Air Europa, Aerolíneas Argentinas</div>
+          </a>
+          <a href="madrid-mexico.html" class="route-card">
+            <div class="route-card__cities">Madrid – Ciudad de México</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">9.070 km</span>
+              <span class="route-card__comp">600€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Air Europa, Aeromexico</div>
+          </a>
+          <a href="madrid-bogota.html" class="route-card">
+            <div class="route-card__cities">Madrid – Bogotá</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">8.040 km</span>
+              <span class="route-card__comp">600€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Avianca</div>
+          </a>
+          <a href="madrid-menorca.html" class="route-card">
+            <div class="route-card__cities">Madrid – Menorca</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">640 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Vueling</div>
+          </a>
+          <a href="madrid-munich.html" class="route-card">
+            <div class="route-card__cities">Madrid – Múnich</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.490 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Lufthansa</div>
+          </a>
+          <a href="madrid-frankfurt.html" class="route-card">
+            <div class="route-card__cities">Madrid – Frankfurt</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.420 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Iberia, Lufthansa</div>
+          </a>
+        </div>
+      </div>
+      <div class="origin-group">
+        <h2 class="origin-group__title">Vuelos desde Barcelona</h2>
+        <div class="origin-group__grid">
+          <a href="barcelona-palma-mallorca.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Palma de Mallorca</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">205 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-tenerife.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Tenerife</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">2.080 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-gran-canaria.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Gran Canaria</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">2.100 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-malaga.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Málaga</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">770 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-ibiza.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Ibiza</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">280 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-sevilla.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Sevilla</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">830 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-bilbao.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Bilbao</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">470 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling</div>
+          </a>
+          <a href="barcelona-valencia.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Valencia</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">300 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-londres.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Londres</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.140 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, easyJet, Ryanair</div>
+          </a>
+          <a href="barcelona-paris.html" class="route-card">
+            <div class="route-card__cities">Barcelona – París</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">830 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, easyJet, Air France</div>
+          </a>
+          <a href="barcelona-roma.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Roma</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">860 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair</div>
+          </a>
+          <a href="barcelona-amsterdam.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Ámsterdam</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.235 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, KLM, easyJet</div>
+          </a>
+          <a href="barcelona-milan.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Milán</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">720 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, Ryanair, easyJet</div>
+          </a>
+          <a href="barcelona-nueva-york.html" class="route-card">
+            <div class="route-card__cities">Barcelona – Nueva York</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">6.170 km</span>
+              <span class="route-card__comp">600€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, LEVEL, American Airlines</div>
+          </a>
+        </div>
+      </div>
+      <div class="origin-group">
+        <h2 class="origin-group__title">Vuelos desde Málaga</h2>
+        <div class="origin-group__grid">
+          <a href="malaga-londres.html" class="route-card">
+            <div class="route-card__cities">Málaga – Londres</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.590 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">easyJet, Ryanair, British Airways</div>
+          </a>
+          <a href="malaga-paris.html" class="route-card">
+            <div class="route-card__cities">Málaga – París</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.370 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Vueling, easyJet, Transavia</div>
+          </a>
+        </div>
+      </div>
+      <div class="origin-group">
+        <h2 class="origin-group__title">Vuelos desde Palma de Mallorca</h2>
+        <div class="origin-group__grid">
+          <a href="palma-mallorca-londres.html" class="route-card">
+            <div class="route-card__cities">Palma de Mallorca – Londres</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.345 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">easyJet, Ryanair, British Airways</div>
+          </a>
+          <a href="palma-mallorca-menorca.html" class="route-card">
+            <div class="route-card__cities">Palma de Mallorca – Menorca</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">130 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Air Europa</div>
+          </a>
+        </div>
+      </div>
+      <div class="origin-group">
+        <h2 class="origin-group__title">Vuelos desde Alicante</h2>
+        <div class="origin-group__grid">
+          <a href="alicante-londres.html" class="route-card">
+            <div class="route-card__cities">Alicante – Londres</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">1.430 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">easyJet, Ryanair, British Airways</div>
+          </a>
+        </div>
+      </div>
+      <div class="origin-group">
+        <h2 class="origin-group__title">Vuelos desde Tenerife</h2>
+        <div class="origin-group__grid">
+          <a href="tenerife-londres.html" class="route-card">
+            <div class="route-card__cities">Tenerife – Londres</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">2.900 km</span>
+              <span class="route-card__comp">400€</span>
+            </div>
+            <div class="route-card__airlines">easyJet, Ryanair, British Airways</div>
+          </a>
+        </div>
+      </div>
+      <div class="origin-group">
+        <h2 class="origin-group__title">Vuelos desde Gran Canaria</h2>
+        <div class="origin-group__grid">
+          <a href="gran-canaria-tenerife.html" class="route-card">
+            <div class="route-card__cities">Gran Canaria – Tenerife Norte</div>
+            <div class="route-card__meta">
+              <span class="route-card__distance">115 km</span>
+              <span class="route-card__comp">250€</span>
+            </div>
+            <div class="route-card__airlines">Binter Canarias, Canaryfly</div>
+          </a>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section--alt" id="faq">
+  <div class="container">
+    <h2 class="section__title">Preguntas frecuentes sobre rutas</h2>
+    <div class="faq-list">
+      <details class="faq-item" open>
+        <summary class="faq-item__q">¿Qué vuelos tienen derecho a compensación?</summary>
+        <div class="faq-item__a">
+          <p>Bajo el Reglamento CE 261/2004, tienes derecho a compensación si tu vuelo salió desde un aeropuerto de la UE, o llegó a un aeropuerto de la UE en una aerolínea europea, y sufrió un retraso superior a 3 horas, una cancelación sin previo aviso o una denegación de embarque.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-item__q">¿Cuánto tiempo tengo para reclamar?</summary>
+        <div class="faq-item__a">
+          <p>En España, el plazo para reclamar es de 5 años desde la fecha del vuelo. No esperes demasiado: cuanto antes reclames, más fácil será recopilar la documentación necesaria.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-item__q">¿Cómo calculo la distancia de mi vuelo?</summary>
+        <div class="faq-item__a">
+          <p>La distancia se calcula entre el aeropuerto de origen y el aeropuerto de destino final según el método de la gran círculo (la ruta más corta posible). Esta distancia determina el tramo de compensación: 250€ para vuelos de hasta 1.500 km, 400€ para vuelos intracomunitarios de más de 1.500 km o vuelos de entre 1.500 y 3.500 km, y 600€ para vuelos de más de 3.500 km fuera de la UE.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-item__q">¿Qué pasa si mi vuelo tuvo escala?</summary>
+        <div class="faq-item__a">
+          <p>Si tu vuelo tuvo escala, la compensación se calcula en base a la distancia total entre el origen y el destino final. Si el retraso se produjo en la escala intermedia, aún podrías tener derecho a compensación si llegaste al destino final con más de 3 horas de retraso.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <h2 class="cta-card__title">¿Tu vuelo está en esta lista?</h2>
+      <p class="cta-card__desc">Comprueba en 2 minutos si tienes derecho a compensación y cuánto puedes reclamar.</p>
+      <a href="../index.html#hero" class="btn btn--primary btn--lg">Comprobar mi vuelo ahora</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="../" class="logo" aria-label="AeroReclaim">
+        <svg class="logo__mark" width="28" height="28" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 3L5 8.5v9c0 7.5 5.5 14 13 16 7.5-2 13-8.5 13-16v-9L18 3z" fill="var(--color-primary)" fill-opacity="0.08" stroke="var(--color-primary)" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M12 18.5l4 4 8-9" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="logo__text">AeroReclaim</span>
+      </a>
+      <p class="footer__tagline">Reclamaciones de vuelos sin esfuerzo.</p>
+    </div>
+    <nav class="footer__nav" aria-label="Navegación del pie de página">
+      <div class="footer__col">
+        <h3 class="footer__heading">Reclamar</h3>
+        <ul role="list">
+          <li><a href="../index.html#como-funciona">Cómo funciona</a></li>
+          <li><a href="../index.html#compensaciones">Compensaciones</a></li>
+          <li><a href="../index.html#hero">Iniciar reclamación</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h3 class="footer__heading">Rutas</h3>
+        <ul role="list">
+          <li><a href="./">Todas las rutas</a></li>
+          <li><a href="barcelona-madrid.html">Barcelona – Madrid</a></li>
+          <li><a href="madrid-barcelona.html">Madrid – Barcelona</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h3 class="footer__heading">Legal</h3>
+        <ul role="list">
+          <li><a href="../legal/aviso-legal.html">Aviso legal</a></li>
+          <li><a href="../legal/politica-privacidad.html">Política de privacidad</a></li>
+          <li><a href="../legal/politica-cookies.html">Política de cookies</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="footer__bottom">
+      <p>© 2025 AeroReclaim. Todos los derechos reservados.</p>
+      <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer" class="footer__attribution">Created with Perplexity Computer</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../app.js" defer></script>
+</body>
+</html>
