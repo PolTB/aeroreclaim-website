@@ -1,0 +1,183 @@
+/* AeroReclaim Design System — Custom Palette */
+/* Professional legal-tech/fintech: navy, sky blue, green accents */
+
+:root {
+  /* Type Scale - Fluid */
+  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+  --text-base: clamp(1rem,     0.9rem  + 0.5vw,  1.125rem);
+  --text-lg:   clamp(1.125rem, 0.95rem + 0.85vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1rem    + 1.5vw,  2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+  --text-3xl:  clamp(2.5rem,   1rem    + 4vw,    5rem);
+  --text-hero: clamp(3rem,     0.5rem  + 7vw,    8rem);
+
+  /* 4px Spacing System */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Font Families */
+  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Content widths */
+  --content-narrow: 640px;
+  --content-default: 960px;
+  --content-wide: 1200px;
+  --content-full: 100%;
+}
+
+/* LIGHT MODE (Default) */
+:root, [data-theme="light"] {
+  /* Surfaces */
+  --color-bg:             #FFFFFF;
+  --color-surface:        #F8FAFC;
+  --color-surface-2:      #F1F5F9;
+  --color-surface-offset: #E2E8F0;
+  --color-surface-offset-2: #CBD5E1;
+  --color-surface-dynamic: #94A3B8;
+  --color-divider:        #E2E8F0;
+  --color-border:         #CBD5E1;
+
+  /* Text */
+  --color-text:           #1E293B;
+  --color-text-muted:     #64748B;
+  --color-text-faint:     #94A3B8;
+  --color-text-inverse:   #FFFFFF;
+
+  /* Primary Accent — Sky Blue */
+  --color-primary:        #2563EB;
+  --color-primary-hover:  #1D4ED8;
+  --color-primary-active: #1E40AF;
+  --color-primary-highlight: #DBEAFE;
+
+  /* Success — Green for money indicators */
+  --color-success:        #10B981;
+  --color-success-hover:  #059669;
+  --color-success-active: #047857;
+  --color-success-highlight: #D1FAE5;
+
+  /* Warning — Gold for trust indicators */
+  --color-warning:        #F59E0B;
+  --color-warning-hover:  #D97706;
+  --color-warning-active: #B45309;
+  --color-warning-highlight: #FEF3C7;
+
+  /* Error */
+  --color-error:          #EF4444;
+  --color-error-hover:    #DC2626;
+  --color-error-active:   #B91C1C;
+  --color-error-highlight: #FEE2E2;
+
+  /* Navy (for dark sections) */
+  --color-navy:           #0A1628;
+  --color-navy-light:     #1E293B;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px oklch(0.2 0.02 240 / 0.06);
+  --shadow-md: 0 4px 12px oklch(0.2 0.02 240 / 0.08);
+  --shadow-lg: 0 12px 32px oklch(0.2 0.02 240 / 0.12);
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+  --color-bg:             #0A1628;
+  --color-surface:        #0F1D32;
+  --color-surface-2:      #162542;
+  --color-surface-offset: #1E2D4A;
+  --color-surface-offset-2: #263A5C;
+  --color-surface-dynamic: #334A6E;
+  --color-divider:        #1E2D4A;
+  --color-border:         #263A5C;
+
+  --color-text:           #E2E8F0;
+  --color-text-muted:     #94A3B8;
+  --color-text-faint:     #64748B;
+  --color-text-inverse:   #0A1628;
+
+  --color-primary:        #60A5FA;
+  --color-primary-hover:  #3B82F6;
+  --color-primary-active: #2563EB;
+  --color-primary-highlight: #1E3A5F;
+
+  --color-success:        #34D399;
+  --color-success-hover:  #10B981;
+  --color-success-active: #059669;
+  --color-success-highlight: #064E3B;
+
+  --color-warning:        #FBBF24;
+  --color-warning-hover:  #F59E0B;
+  --color-warning-active: #D97706;
+  --color-warning-highlight: #451A03;
+
+  --color-error:          #F87171;
+  --color-error-hover:    #EF4444;
+  --color-error-active:   #DC2626;
+  --color-error-highlight: #450A0A;
+
+  --color-navy:           #0A1628;
+  --color-navy-light:     #1E293B;
+
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2);
+  --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3);
+  --shadow-lg: 0 12px 32px oklch(0 0 0 / 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg:             #0A1628;
+    --color-surface:        #0F1D32;
+    --color-surface-2:      #162542;
+    --color-surface-offset: #1E2D4A;
+    --color-surface-offset-2: #263A5C;
+    --color-surface-dynamic: #334A6E;
+    --color-divider:        #1E2D4A;
+    --color-border:         #263A5C;
+    --color-text:           #E2E8F0;
+    --color-text-muted:     #94A3B8;
+    --color-text-faint:     #64748B;
+    --color-text-inverse:   #0A1628;
+    --color-primary:        #60A5FA;
+    --color-primary-hover:  #3B82F6;
+    --color-primary-active: #2563EB;
+    --color-primary-highlight: #1E3A5F;
+    --color-success:        #34D399;
+    --color-success-hover:  #10B981;
+    --color-success-active: #059669;
+    --color-success-highlight: #064E3B;
+    --color-warning:        #FBBF24;
+    --color-warning-hover:  #F59E0B;
+    --color-warning-active: #D97706;
+    --color-warning-highlight: #451A03;
+    --color-error:          #F87171;
+    --color-error-hover:    #EF4444;
+    --color-error-active:   #DC2626;
+    --color-error-highlight: #450A0A;
+    --color-navy:           #0A1628;
+    --color-navy-light:     #1E293B;
+    --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2);
+    --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3);
+    --shadow-lg: 0 12px 32px oklch(0 0 0 / 0.4);
+  }
+}
