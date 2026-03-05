@@ -14,18 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Merge airport data
-        run: |
-          python3 -c "
-import json
-with open('data/airports_part1.json') as f:
-    p1 = json.load(f)
-with open('data/airports_part2.json') as f:
-    p2 = json.load(f)
-merged = {**p1, **p2}
-with open('data/airport_db_compact.json', 'w') as f:
-    json.dump(merged, f, separators=(',', ':'), ensure_ascii=True)
-print(f'Merged {len(merged)} airports')
-"
+        run: python3 scripts/merge_airports.py
       - name: Commit merged file
         run: |
           git config user.name "github-actions[bot]"
