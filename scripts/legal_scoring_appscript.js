@@ -112,8 +112,9 @@ function installTrigger() {
   });
   
   // Nuevo trigger: cada vez que cambia el sheet
+  // Usamos openById en lugar de getActive() porque el proyecto es standalone
   ScriptApp.newTrigger("onLeadInserted")
-    .forSpreadsheet(SpreadsheetApp.getActive())
+    .forSpreadsheet(SpreadsheetApp.openById('10zEyvd3P57DidwOi2UM1VnXHDnPrIWMnpTSbdZ4zX-E'))
     .onChange()
     .create();
   
