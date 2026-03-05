@@ -119,7 +119,7 @@
     var content = modal.querySelector('#modal-content');
     var steps = [
       { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>', text: 'Verificando número de vuelo...' },
-      { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>', text: 'Analizando ruta y aerolinea...' },
+      { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>', text: 'Analizando ruta y aerolínea...' },
       { icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>', text: 'Calculando compensación...' }
     ];
 
@@ -401,7 +401,15 @@
       // Store lead in memory (will connect to backend later)
       AERORECLAIM.leads = AERORECLAIM.leads || [];
       AERORECLAIM.leads.push(leadData);
-      // Future: POST to API endpoint
+
+      // POST to Google Apps Script endpoint
+      var LEAD_API = 'https://script.google.com/macros/s/AKfycbx397N65CNNcoiy7SgObKDvNVmNcKr32LRdVeSPRCZdXPJMF3j4GFX5_yVCHtyCrLgL/exec';
+      fetch(LEAD_API, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadData)
+      }).catch(function() { /* silent — lead already saved in GA4 */ });
 
       // GA4 event
       if (typeof gtag === 'function') {
