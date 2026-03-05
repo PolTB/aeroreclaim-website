@@ -2,8 +2,9 @@ name: Merge Airport Data
 on:
   push:
     paths:
-      - 'data/airports_part1.json'
-      - 'data/airports_part2.json'
+      - 'data/airports_part_a.json'
+      - 'data/airports_part_b.json'
+      - 'data/airports_part_c.json'
   workflow_dispatch:
 
 jobs:
