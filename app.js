@@ -402,14 +402,31 @@
       AERORECLAIM.leads = AERORECLAIM.leads || [];
       AERORECLAIM.leads.push(leadData);
 
-      // POST to Google Apps Script endpoint
+      // POST to Google Apps Script endpoint via hidden form
       var LEAD_API = 'https://script.google.com/macros/s/AKfycbx397N65CNNcoiy7SgObKDvNVmNcKr32LRdVeSPRCZdXPJMF3j4GFX5_yVCHtyCrLgL/exec';
-      fetch(LEAD_API, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(leadData)
-      }).catch(function() { /* silent — lead already saved in GA4 */ });
+      try {
+        var iframe = document.createElement('iframe');
+        iframe.name = 'lead-submit-frame';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        var hiddenForm = document.createElement('form');
+        hiddenForm.method = 'POST';
+        hiddenForm.action = LEAD_API;
+        hiddenForm.target = 'lead-submit-frame';
+        hiddenForm.style.display = 'none';
+        // Send as single JSON field for Apps Script compatibility
+        var jsonInput = document.createElement('input');
+        jsonInput.type = 'hidden';
+        jsonInput.name = 'payload';
+        jsonInput.value = JSON.stringify(leadData);
+        hiddenForm.appendChild(jsonInput);
+        document.body.appendChild(hiddenForm);
+        hiddenForm.submit();
+        setTimeout(function() {
+          hiddenForm.remove();
+          iframe.remove();
+        }, 5000);
+      } catch(err) { /* silent — lead tracked via GA4 */ }
 
       // GA4 event
       if (typeof gtag === 'function') {
