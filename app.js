@@ -414,12 +414,14 @@
         hiddenForm.action = LEAD_API;
         hiddenForm.target = 'lead-submit-frame';
         hiddenForm.style.display = 'none';
-        // Send as single JSON field for Apps Script compatibility
-        var jsonInput = document.createElement('input');
-        jsonInput.type = 'hidden';
-        jsonInput.name = 'payload';
-        jsonInput.value = JSON.stringify(leadData);
-        hiddenForm.appendChild(jsonInput);
+// Send individual form fields
+    Object.keys(leadData).forEach(function(key) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = leadData[key];
+      hiddenForm.appendChild(input);
+    });
         document.body.appendChild(hiddenForm);
         hiddenForm.submit();
         setTimeout(function() {
