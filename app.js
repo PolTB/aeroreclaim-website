@@ -414,14 +414,24 @@
         hiddenForm.action = LEAD_API;
         hiddenForm.target = 'lead-submit-frame';
         hiddenForm.style.display = 'none';
-// Send individual form fields
-    Object.keys(leadData).forEach(function(key) {
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = leadData[key];
-      hiddenForm.appendChild(input);
-    });
+// Map frontend fields to Apps Script column names
+        var issueMap = { 'delay': 'Retraso >3h', 'cancel': 'Cancelación', 'overbook': 'Overbooking', 'other': 'Otro' };
+        var fieldMap = {
+          'passenger_name': leadData.name,
+          'passenger_email': leadData.email,
+          'flight_number': leadData.flight,
+          'flight_date': leadData.date,
+          'airline_name': leadData.airline,
+          'incident_type': issueMap[leadData.issue] || leadData.issue,
+          'estimated_compensation': leadData.compensation_est + '€'
+        };
+        Object.keys(fieldMap).forEach(function(key) {
+          var input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = fieldMap[key] || '';
+          hiddenForm.appendChild(input);
+        });
         document.body.appendChild(hiddenForm);
         hiddenForm.submit();
         setTimeout(function() {
