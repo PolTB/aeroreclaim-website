@@ -314,7 +314,7 @@
   </url>
   <url>
     <loc>https://aeroreclaim.com/blog/</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -337,33 +337,9 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://aeroreclaim.com/blog/vuelo-cancelado-huelga.html</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://aeroreclaim.com/blog/reclamar-ryanair-guia.html</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://aeroreclaim.com/blog/plazo-reclamar-vuelo-espana.html</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://aeroreclaim.com/blog/conexion-perdida-compensacion.html</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://aeroreclaim.com/blog/vueling-no-paga-compensacion.html</loc>
-    <lastmod>2026-03-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://aeroreclaim.com/blog/vuelos-cancelados-oriente-medio-derechos.html</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 </urlset>
