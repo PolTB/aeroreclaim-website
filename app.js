@@ -415,7 +415,7 @@
       AERORECLAIM.leads.push(leadData);
 
       // POST to Google Apps Script endpoint via hidden form
-      var LEAD_API = 'https://script.google.com/macros/s/AKfycbzca0EP6TqRda41TmJ7IpYwlmPk_oSi_jbwOuLP79YnATjmW6NE0kfq4u7qcv0X29eN/exec';
+      var LEAD_API = 'https://script.google.com/macros/s/AKfycbx397N65CNNcoiy7SgObKDvNVmNcKr32LRdVeSPRCZdXPJMF3j4GFX5_yVCHtyCrLgL/exec';
       try {
         var iframe = document.createElement('iframe');
         iframe.name = 'lead-submit-frame';
