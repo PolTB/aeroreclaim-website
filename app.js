@@ -3,6 +3,15 @@
 (function() {
   'use strict';
 
+  // ===== REFERRAL TRACKING =====
+  // Persist ?ref= param across page navigations within the session
+  (function() {
+    var ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref) {
+      try { sessionStorage.setItem('aeroreclaim_ref', ref); } catch(e) {}
+    }
+  })();
+
   // ===== THEME TOGGLE =====
   var toggle = document.querySelector('[data-theme-toggle]');
   var root = document.documentElement;
@@ -387,6 +396,8 @@
       if (!valid) return;
 
       // Collect lead data
+      var refParam = new URLSearchParams(window.location.search).get('ref') || '';
+      if (!refParam) { try { refParam = sessionStorage.getItem('aeroreclaim_ref') || ''; } catch(e) {} }
       var leadData = {
         name: name.value.trim(),
         email: email.value.trim(),
@@ -395,6 +406,7 @@
         date: dateStr,
         airline: result.airline ? result.airline.name : '',
         compensation_est: comp.estimated,
+        referral: refParam,
         timestamp: new Date().toISOString()
       };
 
@@ -423,7 +435,8 @@
           'flight_date': leadData.date,
           'airline_name': leadData.airline,
           'incident_type': issueMap[leadData.issue] || leadData.issue,
-          'estimated_compensation': leadData.compensation_est + '€'
+          'estimated_compensation': leadData.compensation_est + '€',
+          'referral_source': leadData.referral
         };
         Object.keys(fieldMap).forEach(function(key) {
           var input = document.createElement('input');
