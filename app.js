@@ -415,7 +415,7 @@
       AERORECLAIM.leads.push(leadData);
 
       // POST to Google Apps Script endpoint via hidden form
-      var LEAD_API = 'https://script.google.com/macros/s/AKfycby08l8Sx2yFesge0mQPQXQ0ZICWlAG2ht_YHjcTCb2gL6NogQKwZOg44gIns3r3ekoD/exec';
+      var LEAD_API = 'https://script.google.com/macros/s/AKfycbx397N65CNNcoiy7SgObKDvNVmNcKr32LRdVeSPRCZdXPJMF3j4GFX5_yVCHtyCrLgL/exec';
       try {
         var iframe = document.createElement('iframe');
         iframe.name = 'lead-submit-frame';
@@ -452,6 +452,15 @@
           iframe.remove();
         }, 5000);
       } catch(err) { /* silent — lead tracked via GA4 */ }
+
+      // Update referral_source via GET to v8 deployment (avoids duplicate rows)
+      if (refParam) {
+        try {
+          var refUrl = 'https://script.google.com/macros/s/AKfycby08l8Sx2yFesge0mQPQXQ0ZICWlAG2ht_YHjcTCb2gL6NogQKwZOg44gIns3r3ekoD/exec';
+          refUrl += '?action=update_referral&email=' + encodeURIComponent(leadData.email) + '&referral=' + encodeURIComponent(refParam);
+          fetch(refUrl, { mode: 'no-cors' });
+        } catch(e) { /* silent */ }
+      }
 
       // GA4 event
       if (typeof gtag === 'function') {
