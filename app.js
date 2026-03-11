@@ -456,7 +456,7 @@
       // Update referral_source via GET to v8 deployment (avoids duplicate rows)
       if (refParam) {
         try {
-          var refUrl = 'https://script.google.com/macros/s/AKfycby08l8Sx2yFesge0mQPQXQ0ZICWlAG2ht_YHjcTCb2gL6NogQKwZOg44gIns3r3ekoD/exec';
+          var refUrl = 'https://script.google.com/macros/s/AKfycbwxjXiq1rJPVTkRCDO2E9dAOSeMcgyNz6moyd8vejtii77CvNI8gD4nYhQT59kBXKaXCQ/exec';
           refUrl += '?action=update_referral&email=' + encodeURIComponent(leadData.email) + '&referral=' + encodeURIComponent(refParam);
           fetch(refUrl, { mode: 'no-cors' });
         } catch(e) { /* silent */ }
