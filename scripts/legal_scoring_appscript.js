@@ -33,7 +33,8 @@ const CONFIG = {
     INCIDENCIA:   7,  // G
     COMPENSACION: 8,  // H
     ESTADO:       9,  // I
-    SCORED:       10  // J — nueva columna para marcar "procesado"
+    REFERRAL:     10, // J — referral_source (escrito por Referral Tracker, NO sobrescribir)
+    SCORED:       11  // K — columna para marcar "procesado" por scoring
   }
 };
 
@@ -183,7 +184,7 @@ function onLeadInserted(e) {
 // ═══════════════════════════════════════════════════════════════
 
 function readLead(sheet, row) {
-  var values = sheet.getRange(row, 1, 1, 10).getValues()[0];
+  var values = sheet.getRange(row, 1, 1, 11).getValues()[0];
   
   // Extraer código IATA de aerolínea
   var airlineName = String(values[CONFIG.COL.AEROLINEA - 1] || "");
@@ -225,7 +226,8 @@ function readLead(sheet, row) {
     tipoIncidencia: tipoIncidencia,
     horasRetraso: horasRetraso,
     compensacionPrev: String(values[CONFIG.COL.COMPENSACION - 1] || ""),
-    scored: String(values[9] || "") === "SCORED"
+    referralSource: String(values[9] || ""),
+    scored: String(values[10] || "") === "SCORED"
   };
 }
 
