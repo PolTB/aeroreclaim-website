@@ -137,8 +137,8 @@
   .claim-reasons { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-6); margin-top: var(--space-6); }
   .claim-reason { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-5); border-radius: var(--radius-md, 8px); background: var(--color-bg-primary, #fff); border: 1px solid var(--color-border, oklch(0.9 0 0)); }
   .claim-reason__icon { flex-shrink: 0; margin-top: 2px; }
-  .claim-reason__title { font-weight: 600; font-size: var(--text-sm); margin-bottom: var(--space-1); color: var(--color-text-primary); }
-  .claim-reason__desc { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; }
+  .claim-reason__title { font-weight: 600; font-size: var(--text-sm); margin-bottom: var(--space-1); color: #1a1a1a; }
+  .claim-reason__desc { font-size: var(--text-sm); color: #444444; line-height: 1.5; }
 
   .compensation-table { width: 100%; border-collapse: collapse; margin-top: var(--space-6); }
   .compensation-table th, .compensation-table td { padding: var(--space-3) var(--space-4); text-align: left; border-bottom: 1px solid var(--color-border, oklch(0.9 0 0)); font-size: var(--text-sm); }
@@ -234,7 +234,7 @@
       <div class="form-group">
         <label for="flight-number" class="form-label">Número de vuelo</label>
         <div class="input-wrapper">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           <input type="text" id="flight-number" class="form-input" placeholder="Ej: U21234" autocomplete="off" required pattern="[A-Za-z]{2}\d{1,4}">
         </div>
       </div>
