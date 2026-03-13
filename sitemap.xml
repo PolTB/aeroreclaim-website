@@ -313,6 +313,42 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://aeroreclaim.com/aerolineas/</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aeroreclaim.com/aerolineas/ryanair.html</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://aeroreclaim.com/aerolineas/vueling.html</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://aeroreclaim.com/aerolineas/iberia.html</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://aeroreclaim.com/aerolineas/easyjet.html</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://aeroreclaim.com/aerolineas/air-europa.html</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://aeroreclaim.com/blog/</loc>
     <lastmod>2026-03-05</lastmod>
     <changefreq>weekly</changefreq>
