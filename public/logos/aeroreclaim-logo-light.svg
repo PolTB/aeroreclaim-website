@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 56" width="260" height="56" role="img" aria-label="AeroReclaim">
+  <title>AeroReclaim</title>
+  <!-- Icon: orbit arc -->
+  <g transform="translate(4, 4)">
+    <path d="M5 24 A19 19 0 1 1 24 5" stroke="#0F766E" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M31 1 L24 5 L31 9" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="60" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" letter-spacing="-0.4" fill="#042F2E">Aero</text>
+  <text x="108" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" letter-spacing="-0.4" fill="#0F766E">Reclaim</text>
+  <!-- Tagline -->
+  <text x="61" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="8" font-weight="400" letter-spacing="2.2" fill="#0F766E" opacity="0.7">RECLAMACIONES DE VUELO</text>
+</svg>
