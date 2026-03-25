@@ -414,43 +414,26 @@
       AERORECLAIM.leads = AERORECLAIM.leads || [];
       AERORECLAIM.leads.push(leadData);
 
-      // POST to Google Apps Script endpoint via hidden form
+      // POST to Google Apps Script endpoint via fetch no-cors (works without Google session)
       var LEAD_API = 'https://script.google.com/macros/s/AKfycby08l8Sx2yFesge0mQPQXQ0ZICWlAG2ht_YHjcTCb2gL6NogQKwZOg44gIns3r3ekoD/exec';
+      var issueMap = { 'delay': 'Retraso >3h', 'cancel': 'Cancelación', 'overbook': 'Overbooking', 'other': 'Otro' };
+      var formBody = [
+        'passenger_name=' + encodeURIComponent(leadData.name),
+        'passenger_email=' + encodeURIComponent(leadData.email),
+        'flight_number=' + encodeURIComponent(leadData.flight),
+        'flight_date=' + encodeURIComponent(leadData.date),
+        'airline_name=' + encodeURIComponent(leadData.airline),
+        'incident_type=' + encodeURIComponent(issueMap[leadData.issue] || leadData.issue),
+        'estimated_compensation=' + encodeURIComponent(leadData.compensation_est + '€'),
+        'referral_source=' + encodeURIComponent(leadData.referral || '')
+      ].join('&');
       try {
-        var iframe = document.createElement('iframe');
-        iframe.name = 'lead-submit-frame';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        var hiddenForm = document.createElement('form');
-        hiddenForm.method = 'POST';
-        hiddenForm.action = LEAD_API;
-        hiddenForm.target = 'lead-submit-frame';
-        hiddenForm.style.display = 'none';
-// Map frontend fields to Apps Script column names
-        var issueMap = { 'delay': 'Retraso >3h', 'cancel': 'Cancelación', 'overbook': 'Overbooking', 'other': 'Otro' };
-        var fieldMap = {
-          'passenger_name': leadData.name,
-          'passenger_email': leadData.email,
-          'flight_number': leadData.flight,
-          'flight_date': leadData.date,
-          'airline_name': leadData.airline,
-          'incident_type': issueMap[leadData.issue] || leadData.issue,
-          'estimated_compensation': leadData.compensation_est + '€',
-          'referral_source': leadData.referral
-        };
-        Object.keys(fieldMap).forEach(function(key) {
-          var input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = fieldMap[key] || '';
-          hiddenForm.appendChild(input);
+        fetch(LEAD_API, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formBody
         });
-        document.body.appendChild(hiddenForm);
-        hiddenForm.submit();
-        setTimeout(function() {
-          hiddenForm.remove();
-          iframe.remove();
-        }, 5000);
       } catch(err) { /* silent — lead tracked via GA4 */ }
 
       // Update referral_source via GET to v8 deployment (avoids duplicate rows)
