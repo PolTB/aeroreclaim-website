@@ -273,6 +273,33 @@ AERORECLAIM.airports = {
 
   // ISLANDIA
   "KEF": { city: "Reikiavik", name: "Keflavik", country: "IS", eu: true, lat: 63.9850, lon: -22.6056 }
+     // FIX: aeropuertos intercontinentales faltantes (bug 250€ en vez de 600€ para HAV-MAD)
+  "HAV": { lat: 22.9892,  lon: -82.4097, city: "La Habana",         country: "CU", eu: false },
+  "SNU": { lat: 22.4922,  lon: -79.9437, city: "Santa Clara",        country: "CU", eu: false },
+  "HOG": { lat: 20.7856,  lon: -76.3151, city: "Holguin",            country: "CU", eu: false },
+  "VRA": { lat: 23.0344,  lon: -81.4353, city: "Varadero",           country: "CU", eu: false },
+  "MEX": { lat: 19.4363,  lon: -99.0721, city: "Ciudad de Mexico",   country: "MX", eu: false },
+  "CUN": { lat: 21.0365,  lon: -86.8771, city: "Cancun",             country: "MX", eu: false },
+  "BOG": { lat:  4.7016,  lon: -74.1469, city: "Bogota",             country: "CO", eu: false },
+  "LIM": { lat: -12.0219, lon: -77.1143, city: "Lima",               country: "PE", eu: false },
+  "SCL": { lat: -33.3931, lon: -70.7858, city: "Santiago de Chile",  country: "CL", eu: false },
+  "EZE": { lat: -34.8222, lon: -58.5358, city: "Buenos Aires",       country: "AR", eu: false },
+  "GRU": { lat: -23.4356, lon: -46.4731, city: "Sao Paulo",          country: "BR", eu: false },
+  "GIG": { lat: -22.8100, lon: -43.2505, city: "Rio de Janeiro",     country: "BR", eu: false },
+  "UIO": { lat:  -0.1292, lon: -78.3575, city: "Quito",              country: "EC", eu: false },
+  "MIA": { lat: 25.7959,  lon: -80.2870, city: "Miami",              country: "US", eu: false },
+  "JFK": { lat: 40.6413,  lon: -73.7781, city: "Nueva York JFK",     country: "US", eu: false },
+  "EWR": { lat: 40.6895,  lon: -74.1745, city: "Nueva York Newark",  country: "US", eu: false },
+  "LAX": { lat: 33.9425,  lon: -118.408, city: "Los Angeles",        country: "US", eu: false },
+  "ORD": { lat: 41.9742,  lon: -87.9073, city: "Chicago",            country: "US", eu: false },
+  "DXB": { lat: 25.2532,  lon:  55.3657, city: "Dubai",              country: "AE", eu: false },
+  "BKK": { lat: 13.6811,  lon: 100.7474, city: "Bangkok",            country: "TH", eu: false },
+  "NRT": { lat: 35.7720,  lon: 140.3929, city: "Tokio Narita",       country: "JP", eu: false },
+  "PEK": { lat: 40.0799,  lon: 116.6031, city: "Pekin",              country: "CN", eu: false },
+  "CMN": { lat: 33.3675,  lon:  -7.5898, city: "Casablanca",         country: "MA", eu: false },
+  "DKR": { lat: 14.7397,  lon: -17.4902, city: "Dakar",              country: "SN", eu: false },
+  "NBO": { lat:  -1.3192, lon:  36.9275, city: "Nairobi",            country: "KE", eu: false },
+  "CAI": { lat: 30.1219,  lon:  31.4056, city: "El Cairo",           country: "EG", eu: false },
 };
 
 // ===== RUTAS CONOCIDAS DE AEROLÍNEAS ESPAÑOLAS =====
