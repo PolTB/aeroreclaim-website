@@ -28,6 +28,7 @@ app.js              → lógica principal (pre-validador, leads)
 ```
 
 ## Reglas OBLIGATORIAS en artículos de blog
+⚠️ PARA CREAR UN ARTÍCULO NUEVO: leer blog/PLANTILLA_ARTICULO.html y sustituir el contenido manteniendo TODA la estructura HTML, clases y componentes. NUNCA partir de cero.
 ⚠️ NUNCA inventar clases CSS. Usar SOLO las clases existentes en el repo.
 - Header correcto: `<header class="header" id="header">` con `nav__list`, `nav__link`, `header__actions`
 - Footer correcto: `<footer class="footer">` con `footer__grid`, `footer__brand`, `footer__links`
