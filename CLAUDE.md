@@ -28,6 +28,12 @@ app.js              → lógica principal (pre-validador, leads)
 ```
 
 ## Reglas OBLIGATORIAS en artículos de blog
+⚠️ NUNCA inventar clases CSS. Usar SOLO las clases existentes en el repo.
+- Header correcto: `<header class="header" id="header">` con `nav__list`, `nav__link`, `header__actions`
+- Footer correcto: `<footer class="footer">` con `footer__grid`, `footer__brand`, `footer__links`
+- Clases INCORRECTAS (no existen): `site-header`, `site-footer`, `nav-links`, `nav-logo`, `btn-primary` (usar `btn--primary`)
+- SIEMPRE copiar el header y footer EXACTOS de blog/derechos-pasajero-semana-santa-2026/index.html
+
 1. Siempre incluir `<script src="../../app.js" defer></script>` justo antes de `</body>` — sin este script el layout no funciona.
 2. Incluir botón theme-toggle en el header (igual que en derechos-pasajero-semana-santa-2026/index.html).
 
