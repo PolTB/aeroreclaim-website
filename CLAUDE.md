@@ -27,6 +27,10 @@ validator.css       → estilos del pre-validador
 app.js              → lógica principal (pre-validador, leads)
 ```
 
+## Reglas OBLIGATORIAS en artículos de blog
+1. Siempre incluir `<script src="../../app.js" defer></script>` justo antes de `</body>` — sin este script el layout no funciona.
+2. Incluir botón theme-toggle en el header (igual que en derechos-pasajero-semana-santa-2026/index.html).
+
 ## Reglas CSS OBLIGATORIAS
 1. Todos los artículos de blog DEBEN tener `<html lang="es" data-theme="light">` — sin este atributo el layout se rompe.
 2. Orden de CSS en artículos de blog (siempre en este orden):
