@@ -111,6 +111,25 @@ var AERORECLAIM = AERORECLAIM || {};
     };
   }
 
+
+     // ===== CALCULATE ROUTE DISTANCE (FIX: fallback intercontinental) =====
+  function calculateRouteDistance(origin, destination) {
+    var originAirport      = AERORECLAIM.airports[origin];
+    var destinationAirport = AERORECLAIM.airports[destination];
+
+    var distance;
+    if (!originAirport || !destinationAirport) {
+      // Fallback: aeropuerto no en DB -> asumir intercontinental -> 600EUR
+      distance = 4000;
+      console.warn('[AeroReclaim] Aeropuerto no encontrado:', !originAirport ? origin : destination);
+    } else {
+      distance = haversine(
+        originAirport.lat, originAirport.lon,
+        destinationAirport.lat, destinationAirport.lon
+      );
+    }
+    return distance;
+  }
   // ===== MAIN VALIDATION FUNCTION =====
   AERORECLAIM.validate = function(flightNumber, dateStr) {
     var result = {
