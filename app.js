@@ -359,6 +359,15 @@
 
     // Lead form submission
     var leadForm = document.getElementById('lead-form');
+    var leadFormStartFired = false;
+    leadForm.addEventListener('focusin', function() {
+      if (!leadFormStartFired) {
+        leadFormStartFired = true;
+        if (typeof gtag === 'function') {
+          gtag('event', 'form_start', { event_category: 'funnel', form_id: 'lead-form' });
+        }
+      }
+    });
     leadForm.addEventListener('submit', function(e) {
       e.preventDefault();
       var name = document.getElementById('lead-name');
@@ -485,11 +494,33 @@
     var form = document.getElementById(formId);
     if (!form) return;
 
+    // Funnel: form_start — fire once on first interaction
+    var formStartFired = false;
+    form.addEventListener('focusin', function() {
+      if (!formStartFired) {
+        formStartFired = true;
+        if (typeof gtag === 'function') {
+          gtag('event', 'form_start', { event_category: 'funnel', form_id: formId });
+        }
+      }
+    });
+
     form.addEventListener('submit', function(e) {
       e.preventDefault();
 
       var flightInput = form.querySelector('input[type="text"]');
       var dateInput = form.querySelector('input[type="date"]');
+
+      // Funnel: form_submit — fire on every submit attempt (before validation)
+      if (typeof gtag === 'function') {
+        gtag('event', 'form_submit', {
+          event_category: 'funnel',
+          form_id: formId,
+          flight_number: flightInput ? flightInput.value.trim().toUpperCase() : undefined,
+          flight_date: dateInput ? dateInput.value : undefined
+        });
+      }
+
       var valid = true;
 
       // Flight number validation
