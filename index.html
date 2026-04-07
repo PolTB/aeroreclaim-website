@@ -150,6 +150,7 @@
 
     <nav class="nav" id="nav" aria-label="Navegación principal">
       <ul class="nav__list" role="list">
+        <li><a href="#validador" class="nav__link">¿Puedo reclamar?</a></li>
         <li><a href="#como-funciona" class="nav__link">Cómo funciona</a></li>
         <li><a href="#compensaciones" class="nav__link">Compensaciones</a></li>
         <li><a href="#opiniones" class="nav__link">Opiniones</a></li>
@@ -172,6 +173,7 @@
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
     <ul class="mobile-menu__list" role="list">
+      <li><a href="#validador" class="mobile-menu__link">¿Puedo reclamar?</a></li>
       <li><a href="#como-funciona" class="mobile-menu__link">Cómo funciona</a></li>
       <li><a href="#compensaciones" class="mobile-menu__link">Compensaciones</a></li>
       <li><a href="#opiniones" class="mobile-menu__link">Opiniones</a></li>
@@ -191,8 +193,8 @@
   </div>
   <div class="hero__content container">
     <div class="hero__text">
-      <h1 class="hero__title">¿Vuelo retrasado o cancelado?<br><span class="hero__highlight">Te conseguimos hasta 600€</span> de compensación</h1>
-      <p class="hero__subtitle">Sin gastos iniciales. Solo cobramos si ganamos. Comprueba tu vuelo en 2 minutos.</p>
+      <h1 class="hero__title">¿Tu vuelo llegó tarde, fue cancelado<br>o te denegaron embarque?<br><span class="hero__highlight">Recupera hasta 600€</span> — sin pagar nada si no ganamos</h1>
+      <p class="hero__subtitle">Nada si no cobramos · <strong>25% + IVA</strong> si ganamos · Comprueba tu caso en 2 minutos</p>
     </div>
 
     <form class="hero__form" id="flight-form" novalidate>
@@ -228,6 +230,73 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         <span>Proceso 100% digital</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRE-VALIDADOR -->
+<section class="section section--surface" id="validador">
+  <div class="container container--narrow">
+    <div class="section__header">
+      <span class="section__overline">Comprobación rápida</span>
+      <h2 class="section__title">¿Puedo reclamar mi vuelo?</h2>
+      <p class="section__desc">Responde 3 preguntas y te decimos al instante si tienes derecho a compensación.</p>
+    </div>
+
+    <form class="pv-form" id="pv-form" novalidate>
+      <div class="pv-form__fields">
+        <div class="form-group">
+          <label for="pv-airline" class="form-label">¿Con qué aerolínea viajaste?</label>
+          <select id="pv-airline" class="form-input" required>
+            <option value="">Selecciona aerolínea…</option>
+            <option value="VY">Vueling</option>
+            <option value="FR">Ryanair</option>
+            <option value="UX">Air Europa</option>
+            <option value="IB">Iberia</option>
+            <option value="I2">Iberia Express</option>
+            <option value="EC">Air Nostrum (Iberia Regional)</option>
+            <option value="other">Otra aerolínea</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="pv-incident" class="form-label">¿Qué ocurrió con tu vuelo?</label>
+          <select id="pv-incident" class="form-input" required>
+            <option value="">Selecciona el problema…</option>
+            <option value="delay3">Retraso de más de 3 horas en destino</option>
+            <option value="cancel">Vuelo cancelado</option>
+            <option value="overbook">Me denegaron el embarque (overbooking)</option>
+            <option value="delay2">Retraso de 2–3 horas</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">¿Tienes algún justificante del vuelo?</label>
+          <div class="pv-radio-group">
+            <label class="pv-radio">
+              <input type="radio" name="pv-boarding" value="yes" required>
+              <span>Sí (boarding pass, email de reserva, etc.)</span>
+            </label>
+            <label class="pv-radio">
+              <input type="radio" name="pv-boarding" value="no">
+              <span>No, pero recuerdo el número de vuelo</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--lg btn--full">
+        Comprobar si puedo reclamar
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </form>
+
+    <div class="pv-result" id="pv-result" hidden>
+      <div class="pv-result__icon" id="pv-result-icon" aria-hidden="true"></div>
+      <p class="pv-result__text" id="pv-result-text"></p>
+      <a href="#hero" class="btn btn--primary btn--lg pv-result__cta" id="pv-result-cta" hidden>
+        Introducir datos de mi vuelo →
+      </a>
     </div>
   </div>
 </section>
@@ -271,8 +340,8 @@
         <div class="step__icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6M11 8v6"/></svg>
         </div>
-        <h3 class="step__title">Introduce tu vuelo</h3>
-        <p class="step__desc">Introduce el número de vuelo y la fecha. Nuestro sistema verifica automáticamente si tienes derecho a compensación.</p>
+        <h3 class="step__title">Reclama</h3>
+        <p class="step__desc">Introduce tu número de vuelo y fecha. En 2 minutos verificamos si tienes derecho a compensación y abrimos tu caso.</p>
       </div>
 
       <div class="step animate-on-scroll">
@@ -280,8 +349,8 @@
         <div class="step__icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
         </div>
-        <h3 class="step__title">Nosotros nos encargamos</h3>
-        <p class="step__desc">Nuestra IA gestiona todo: documentación, reclamación a la aerolínea y seguimiento. Tú no tienes que hacer nada.</p>
+        <h3 class="step__title">Esperamos</h3>
+        <p class="step__desc">Nos encargamos de todo: documentación, carta a la aerolínea y seguimiento. Tú no tienes que hacer nada.</p>
       </div>
 
       <div class="step animate-on-scroll">
@@ -289,8 +358,8 @@
         <div class="step__icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg>
         </div>
-        <h3 class="step__title">Recibe tu dinero</h3>
-        <p class="step__desc">Cuando la aerolínea paga, te transferimos tu compensación menos nuestra comisión del 25%.</p>
+        <h3 class="step__title">Cobras</h3>
+        <p class="step__desc">Cuando la aerolínea paga, recibes tu compensación directamente. Nosotros solo cobramos el 25% + IVA si ganamos.</p>
       </div>
     </div>
   </div>
@@ -641,5 +710,49 @@
 <script src="./flight-data.js"></script>
 <script src="./validator.js"></script>
 <script src="./app.js" defer></script>
+<script>
+// Pre-validador rápido — AER-8
+(function() {
+  var form = document.getElementById('pv-form');
+  var resultBox = document.getElementById('pv-result');
+  var resultIcon = document.getElementById('pv-result-icon');
+  var resultText = document.getElementById('pv-result-text');
+  var resultCta = document.getElementById('pv-result-cta');
+  if (!form) return;
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var airline = document.getElementById('pv-airline').value;
+    var incident = document.getElementById('pv-incident').value;
+    var boarding = form.querySelector('input[name="pv-boarding"]:checked');
+
+    if (!airline || !incident || !boarding) {
+      resultBox.hidden = false;
+      resultIcon.textContent = '⚠️';
+      resultText.textContent = 'Por favor, responde las tres preguntas para continuar.';
+      resultCta.hidden = true;
+      return;
+    }
+
+    var eligible = incident === 'delay3' || incident === 'cancel' || incident === 'overbook';
+    var maybeEligible = incident === 'delay2';
+
+    resultBox.hidden = false;
+    if (eligible) {
+      resultIcon.textContent = '✅';
+      resultText.innerHTML = '<strong>¡Buenas noticias!</strong> Tu caso parece reclamable bajo el Reglamento CE 261/2004. Puedes cobrar entre <strong>250€ y 600€</strong> según la distancia del vuelo — sin pagar nada si no ganamos.';
+      resultCta.hidden = false;
+    } else if (maybeEligible) {
+      resultIcon.textContent = '🔍';
+      resultText.innerHTML = 'Con retrasos de 2–3 horas la compensación depende de la ruta. Introduce los datos de tu vuelo y lo verificamos gratis.';
+      resultCta.hidden = false;
+    } else {
+      resultIcon.textContent = 'ℹ️';
+      resultText.innerHTML = 'Introduce los datos concretos de tu vuelo para que podamos verificar tu caso sin compromiso.';
+      resultCta.hidden = false;
+    }
+  });
+})();
+</script>
 </body>
 </html>
