@@ -186,11 +186,38 @@
 
     content.innerHTML = html;
 
+    // GA4: resultado del validador
+    if (typeof gtag === 'function') {
+      if (result.status === 'error') {
+        gtag('event', 'validador_no_elegible', {
+          flight_number: flightNumber,
+          flight_date: dateStr,
+          error_reasons: (result.errors || []).join(',')
+        });
+      } else {
+        gtag('event', 'validador_elegible', {
+          flight_number: flightNumber,
+          flight_date: dateStr,
+          airline: result.airline ? result.airline.code : '',
+          compensation_est: result.compensation ? result.compensation.estimated : 0,
+          confidence: result.confidence || ''
+        });
+      }
+    }
+
     // Add event listener to CTA
     var ctaBtn = content.querySelector('#result-cta');
     if (ctaBtn) {
       ctaBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        if (typeof gtag === 'function') {
+          gtag('event', 'mandato_inicio', {
+            flight_number: flightNumber,
+            flight_date: dateStr,
+            airline: result.airline ? result.airline.code : '',
+            compensation_est: result.compensation ? result.compensation.estimated : 0
+          });
+        }
         showLeadForm(content, result, flightNumber, dateStr);
       });
     }
@@ -454,13 +481,15 @@
         } catch(e) { /* silent */ }
       }
 
-      // GA4 event
+      // GA4 event — lead_capturado es la conversión principal vinculada a Google Ads
       if (typeof gtag === 'function') {
-        gtag('event', 'lead_submit', {
+        gtag('event', 'lead_capturado', {
           flight_number: flightNumber,
           airline: result.airline ? result.airline.code : '',
           compensation_est: comp.estimated,
-          issue_type: issue.value
+          issue_type: issue.value,
+          value: comp.estimated * 0.25,
+          currency: 'EUR'
         });
       }
 
@@ -500,7 +529,7 @@
       if (!formStartFired) {
         formStartFired = true;
         if (typeof gtag === 'function') {
-          gtag('event', 'form_start', { event_category: 'funnel', form_id: formId });
+          gtag('event', 'validador_inicio', { form_id: formId });
         }
       }
     });
