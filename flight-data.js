@@ -272,8 +272,9 @@ AERORECLAIM.airports = {
   "LUX": { city: "Luxemburgo", name: "Luxembourg", country: "LU", eu: true, lat: 49.6233, lon: 6.2044 },
 
   // ISLANDIA
-  "KEF": { city: "Reikiavik", name: "Keflavik", country: "IS", eu: true, lat: 63.9850, lon: -22.6056 }
-     // FIX: aeropuertos intercontinentales faltantes (bug 250€ en vez de 600€ para HAV-MAD)
+  "KEF": { city: "Reikiavik", name: "Keflavik", country: "IS", eu: true, lat: 63.9850, lon: -22.6056 },
+
+  // aeropuertos intercontinentales (necesarios para calcular 600€ en rutas largas)
   "HAV": { lat: 22.9892,  lon: -82.4097, city: "La Habana",         country: "CU", eu: false },
   "SNU": { lat: 22.4922,  lon: -79.9437, city: "Santa Clara",        country: "CU", eu: false },
   "HOG": { lat: 20.7856,  lon: -76.3151, city: "Holguin",            country: "CU", eu: false },
