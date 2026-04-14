@@ -87,10 +87,18 @@
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "¿Qué vuelos pueden ser reclamados?",
+        "name": "¿Mi vuelo está cubierto por la ley europea?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Vuelos retrasados más de 3 horas, cancelados o con overbooking en vuelos dentro, desde o hacia la UE. Esto incluye aerolíneas de cualquier nacionalidad que operen en rutas europeas."
+          "text": "El CE 261/2004 aplica si tu vuelo salió desde un aeropuerto europeo (cualquier aerolínea), o si volaste con una aerolínea europea hacia Europa. No aplica si saliste desde fuera de la UE con una aerolínea no europea, aunque llegaras a España."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué incidencias se pueden reclamar?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Vuelos retrasados más de 3 horas en destino, cancelados con menos de 14 días de aviso, o con denegación de embarque por overbooking."
         }
       },
       {
@@ -210,7 +218,34 @@
       </div>
     </div>
 
-    <form class="hero__form" id="flight-form" novalidate>
+    <!-- Pre-filtro de elegibilidad: origen del vuelo -->
+    <div id="origin-prefilter" class="hero__form" style="padding:0;">
+      <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:0 0 var(--space-3);">¿Desde dónde salió tu vuelo?</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+        <button type="button" id="origin-eu"
+          style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;text-align:left;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);font-weight:500;transition:border-color 0.2s,background 0.2s;width:100%;">
+          <span style="font-size:1.25rem;">✅</span>
+          <span>Desde un aeropuerto europeo <span style="color:var(--color-text-muted);font-weight:400;">(España, Francia, Alemania…)</span></span>
+        </button>
+        <button type="button" id="origin-noneu"
+          style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;text-align:left;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);font-weight:500;transition:border-color 0.2s,background 0.2s;width:100%;">
+          <span style="font-size:1.25rem;">✈️</span>
+          <span>Desde fuera de Europa <span style="color:var(--color-text-muted);font-weight:400;">(América, Asia, África…)</span></span>
+        </button>
+      </div>
+    </div>
+    <!-- Aviso de inelegibilidad (oculto por defecto) -->
+    <div id="origin-ineligible" class="hero__form" style="display:none;text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:var(--space-2);">⚠️</div>
+      <p style="font-weight:600;color:var(--color-text);margin:0 0 var(--space-2);">Tu vuelo posiblemente no está cubierto</p>
+      <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.6;">El Reglamento CE 261/2004 no aplica si saliste desde fuera de la UE con una aerolínea no europea. Solo cubre vuelos que <strong>salen de Europa</strong> (cualquier aerolínea) o que <strong>llegan a Europa</strong> con aerolínea europea.</p>
+      <button type="button" id="origin-back"
+        style="background:transparent;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-2) var(--space-4);font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text-muted);cursor:pointer;">
+        ← Cambiar respuesta
+      </button>
+    </div>
+
+    <form class="hero__form" id="flight-form" novalidate style="display:none;">
       <div class="form-group">
         <label for="flight-number" class="form-label">Número de vuelo</label>
         <div class="input-wrapper">
@@ -535,11 +570,26 @@
     <div class="faq-list">
       <details class="faq-item animate-on-scroll">
         <summary class="faq-item__question">
-          ¿Qué vuelos pueden ser reclamados?
+          ¿Mi vuelo está cubierto por la ley europea?
           <svg class="faq-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="faq-item__answer">
-          <p>Vuelos retrasados más de 3 horas en destino, cancelados con menos de 14 días de aviso, o con denegación de embarque por overbooking. Aplica a vuelos dentro de la UE o saliendo de la UE, independientemente de la aerolínea. También a vuelos llegando a la UE operados por aerolíneas europeas.</p>
+          <p>El Reglamento CE 261/2004 aplica en estos dos casos:</p>
+          <ul style="margin:var(--space-2) 0 var(--space-3) var(--space-4);line-height:1.8;">
+            <li>✅ <strong>Tu vuelo salió desde un aeropuerto europeo</strong> (España, Francia, Alemania, etc.) — con cualquier aerolínea.</li>
+            <li>✅ <strong>Volaste con una aerolínea europea hacia Europa</strong> — aunque salieras de fuera de la UE.</li>
+          </ul>
+          <p>❌ Si saliste desde fuera de la UE con una aerolínea no europea (por ejemplo, desde Brasil con Azul, o desde Nueva York con American Airlines), la normativa europea no aplica aunque tu destino final fuera España.</p>
+        </div>
+      </details>
+
+      <details class="faq-item animate-on-scroll">
+        <summary class="faq-item__question">
+          ¿Qué incidencias se pueden reclamar?
+          <svg class="faq-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="faq-item__answer">
+          <p>Vuelos retrasados más de 3 horas en destino, cancelados con menos de 14 días de aviso, o con denegación de embarque por overbooking.</p>
         </div>
       </details>
 

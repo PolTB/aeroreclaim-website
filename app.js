@@ -621,6 +621,42 @@
     });
   }
 
+  // ===== ORIGIN PRE-FILTER =====
+  var originPrefilter = document.getElementById('origin-prefilter');
+  var originIneligible = document.getElementById('origin-ineligible');
+  var flightFormEl = document.getElementById('flight-form');
+  var btnEU = document.getElementById('origin-eu');
+  var btnNonEU = document.getElementById('origin-noneu');
+  var btnBack = document.getElementById('origin-back');
+
+  if (btnEU && btnNonEU && flightFormEl) {
+    btnEU.addEventListener('click', function() {
+      originPrefilter.style.display = 'none';
+      originIneligible.style.display = 'none';
+      flightFormEl.style.display = '';
+      if (typeof gtag === 'function') {
+        gtag('event', 'prefilter_origen_eu', { origin_choice: 'eu' });
+      }
+    });
+
+    btnNonEU.addEventListener('click', function() {
+      originPrefilter.style.display = 'none';
+      flightFormEl.style.display = 'none';
+      originIneligible.style.display = '';
+      if (typeof gtag === 'function') {
+        gtag('event', 'prefilter_origen_no_eu', { origin_choice: 'non_eu' });
+      }
+    });
+
+    if (btnBack) {
+      btnBack.addEventListener('click', function() {
+        originIneligible.style.display = 'none';
+        flightFormEl.style.display = 'none';
+        originPrefilter.style.display = '';
+      });
+    }
+  }
+
   setupValidatorForm('flight-form');
   setupValidatorForm('cta-form');
 
