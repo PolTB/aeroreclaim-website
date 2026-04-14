@@ -623,38 +623,94 @@
 
   // ===== ORIGIN PRE-FILTER =====
   var originPrefilter = document.getElementById('origin-prefilter');
+  var airlinePrefilter = document.getElementById('airline-prefilter');
   var originIneligible = document.getElementById('origin-ineligible');
   var flightFormEl = document.getElementById('flight-form');
-  var btnEU = document.getElementById('origin-eu');
-  var btnNonEU = document.getElementById('origin-noneu');
-  var btnBack = document.getElementById('origin-back');
 
-  if (btnEU && btnNonEU && flightFormEl) {
-    btnEU.addEventListener('click', function() {
-      originPrefilter.style.display = 'none';
-      originIneligible.style.display = 'none';
-      flightFormEl.style.display = '';
-      if (typeof gtag === 'function') {
-        gtag('event', 'prefilter_origen_eu', { origin_choice: 'eu' });
-      }
+  var btnOriginEU    = document.getElementById('origin-eu');
+  var btnOriginNonEU = document.getElementById('origin-noneu');
+  var btnAirlineEU    = document.getElementById('airline-eu');
+  var btnAirlineNonEU = document.getElementById('airline-noneu');
+  var btnAirlineBack  = document.getElementById('airline-back');
+  var btnIneligibleBack = document.getElementById('origin-back');
+
+  function showOnly(el) {
+    [originPrefilter, airlinePrefilter, originIneligible, flightFormEl].forEach(function(e) {
+      if (e) e.style.display = 'none';
     });
+    if (el) el.style.display = '';
+  }
 
-    btnNonEU.addEventListener('click', function() {
-      originPrefilter.style.display = 'none';
-      flightFormEl.style.display = 'none';
-      originIneligible.style.display = '';
-      if (typeof gtag === 'function') {
-        gtag('event', 'prefilter_origen_no_eu', { origin_choice: 'non_eu' });
-      }
+  if (btnOriginEU) {
+    btnOriginEU.addEventListener('click', function() {
+      showOnly(flightFormEl);
+      if (typeof gtag === 'function') gtag('event', 'prefilter_origen_eu');
     });
+  }
 
-    if (btnBack) {
-      btnBack.addEventListener('click', function() {
-        originIneligible.style.display = 'none';
-        flightFormEl.style.display = 'none';
-        originPrefilter.style.display = '';
-      });
-    }
+  if (btnOriginNonEU) {
+    btnOriginNonEU.addEventListener('click', function() {
+      showOnly(airlinePrefilter);
+      if (typeof gtag === 'function') gtag('event', 'prefilter_origen_no_eu');
+    });
+  }
+
+  if (btnAirlineEU) {
+    btnAirlineEU.addEventListener('click', function() {
+      showOnly(flightFormEl);
+      if (typeof gtag === 'function') gtag('event', 'prefilter_aerolinea_eu');
+    });
+  }
+
+  if (btnAirlineNonEU) {
+    btnAirlineNonEU.addEventListener('click', function() {
+      showOnly(originIneligible);
+      if (typeof gtag === 'function') gtag('event', 'prefilter_inelegible');
+    });
+  }
+
+  if (btnAirlineBack) {
+    btnAirlineBack.addEventListener('click', function() {
+      showOnly(originPrefilter);
+    });
+  }
+
+  if (btnIneligibleBack) {
+    btnIneligibleBack.addEventListener('click', function() {
+      showOnly(originPrefilter);
+    });
+  }
+
+  // Captación email inelegible
+  var btnIneligibleSubmit = document.getElementById('ineligible-submit');
+  if (btnIneligibleSubmit) {
+    btnIneligibleSubmit.addEventListener('click', function() {
+      var emailInput = document.getElementById('ineligible-email');
+      var successMsg = document.getElementById('ineligible-success');
+      var emailVal = emailInput ? emailInput.value.trim() : '';
+      if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+        if (emailInput) emailInput.style.borderColor = 'var(--color-error)';
+        return;
+      }
+      if (emailInput) emailInput.style.borderColor = '';
+      // GA4
+      if (typeof gtag === 'function') {
+        gtag('event', 'ineligible_email_capture', { email: emailVal });
+      }
+      // Enviar al mismo endpoint de leads con tipo ineligible_waitlist
+      var LEAD_API_INELIGIBLE = 'https://script.google.com/macros/s/AKfycby08l8Sx2yFesge0mQPQXQ0ZICWlAG2ht_YHjcTCb2gL6NogQKwZOg44gIns3r3ekoD/exec';
+      try {
+        fetch(LEAD_API_INELIGIBLE, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'passenger_email=' + encodeURIComponent(emailVal) + '&incident_type=ineligible_waitlist&referral_source=' + encodeURIComponent(window.location.href)
+        });
+      } catch(e) {}
+      btnIneligibleSubmit.disabled = true;
+      if (emailInput) emailInput.disabled = true;
+      if (successMsg) successMsg.style.display = 'block';
+    });
   }
 
   setupValidatorForm('flight-form');

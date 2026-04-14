@@ -225,23 +225,54 @@
         <button type="button" id="origin-eu"
           style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;text-align:left;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);font-weight:500;transition:border-color 0.2s,background 0.2s;width:100%;">
           <span style="font-size:1.25rem;">✅</span>
-          <span>Desde un aeropuerto europeo <span style="color:var(--color-text-muted);font-weight:400;">(España, Francia, Alemania…)</span></span>
+          <span>Desde España u otro país de la UE <span style="color:var(--color-text-muted);font-weight:400;">(Francia, Alemania, Italia…)</span></span>
         </button>
         <button type="button" id="origin-noneu"
           style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;text-align:left;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);font-weight:500;transition:border-color 0.2s,background 0.2s;width:100%;">
           <span style="font-size:1.25rem;">✈️</span>
-          <span>Desde fuera de Europa <span style="color:var(--color-text-muted);font-weight:400;">(América, Asia, África…)</span></span>
+          <span>Desde fuera de la UE <span style="color:var(--color-text-muted);font-weight:400;">(América, Asia, África, UK…)</span></span>
+        </button>
+      </div>
+    </div>
+    <!-- Segunda pregunta: aerolínea (solo si origen no-UE) -->
+    <div id="airline-prefilter" class="hero__form" style="display:none;padding:0;">
+      <button type="button" id="airline-back"
+        style="background:transparent;border:none;padding:0;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text-muted);cursor:pointer;margin-bottom:var(--space-3);display:flex;align-items:center;gap:var(--space-1);">
+        ← Volver
+      </button>
+      <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:0 0 var(--space-3);">¿Con qué aerolínea viajabas?</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+        <button type="button" id="airline-eu"
+          style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;text-align:left;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);font-weight:500;transition:border-color 0.2s,background 0.2s;width:100%;">
+          <span style="font-size:1.25rem;">✅</span>
+          <span>Aerolínea europea <span style="color:var(--color-text-muted);font-weight:400;">(Iberia, Vueling, Air Europa, Ryanair, easyJet, Wizz Air, Volotea…)</span></span>
+        </button>
+        <button type="button" id="airline-noneu"
+          style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;text-align:left;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);font-weight:500;transition:border-color 0.2s,background 0.2s;width:100%;">
+          <span style="font-size:1.25rem;">❌</span>
+          <span>Aerolínea no europea <span style="color:var(--color-text-muted);font-weight:400;">(American, Delta, Azul, Emirates, Latam…)</span></span>
         </button>
       </div>
     </div>
     <!-- Aviso de inelegibilidad (oculto por defecto) -->
-    <div id="origin-ineligible" class="hero__form" style="display:none;text-align:center;">
-      <div style="font-size:1.5rem;margin-bottom:var(--space-2);">⚠️</div>
-      <p style="font-weight:600;color:var(--color-text);margin:0 0 var(--space-2);">Tu vuelo posiblemente no está cubierto</p>
-      <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-4);line-height:1.6;">El Reglamento CE 261/2004 no aplica si saliste desde fuera de la UE con una aerolínea no europea. Solo cubre vuelos que <strong>salen de Europa</strong> (cualquier aerolínea) o que <strong>llegan a Europa</strong> con aerolínea europea.</p>
+    <div id="origin-ineligible" class="hero__form" style="display:none;">
+      <div style="text-align:center;margin-bottom:var(--space-4);">
+        <div style="font-size:1.5rem;margin-bottom:var(--space-2);">⚠️</div>
+        <p style="font-weight:600;color:var(--color-text);margin:0 0 var(--space-2);">Este vuelo no está cubierto por el CE 261/2004</p>
+        <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin:0;line-height:1.6;">La ley europea solo aplica si el vuelo <strong>salió de la UE</strong> (cualquier aerolínea) o si <strong>llegó a la UE con aerolínea europea</strong>.</p>
+      </div>
+      <div id="ineligible-capture" style="border-top:1px solid var(--color-border);padding-top:var(--space-4);">
+        <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:0 0 var(--space-1);">¿Tienes otro vuelo desde Europa o quieres que te avisemos cuando ampliemos cobertura?</p>
+        <p style="font-size:var(--text-xs);color:var(--color-text-muted);margin:0 0 var(--space-3);">Déjanos tu email y te contactamos.</p>
+        <div style="display:flex;gap:var(--space-2);">
+          <input type="email" id="ineligible-email" class="form-input" placeholder="tu@email.com" style="flex:1;">
+          <button type="button" id="ineligible-submit" class="btn btn--primary" style="white-space:nowrap;">Avisar</button>
+        </div>
+        <p id="ineligible-success" style="display:none;font-size:var(--text-sm);color:var(--color-success);margin:var(--space-2) 0 0;text-align:center;">✓ Anotado. Te avisamos en cuanto ampliemos cobertura.</p>
+      </div>
       <button type="button" id="origin-back"
-        style="background:transparent;border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-2) var(--space-4);font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text-muted);cursor:pointer;">
-        ← Cambiar respuesta
+        style="background:transparent;border:none;padding:var(--space-3) 0 0;font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text-muted);cursor:pointer;width:100%;text-align:center;">
+        ← Comprobar otro vuelo
       </button>
     </div>
 
