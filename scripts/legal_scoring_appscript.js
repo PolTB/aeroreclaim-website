@@ -406,6 +406,21 @@ function scoreCase(lead) {
     intraEU = true; // Asumir intra-UE por defecto (mercado español)
   }
   
+  // Rechazar si ruta no-UE Y aerolínea no-UE (fuera del ámbito CE 261/2004)
+  var EU_AIRLINE_CODES = ['IB', 'VY', 'FR', 'UX', 'I2'];
+  var airlineCodeUpper = (lead.airlineCode || '').toUpperCase();
+  if (!intraEU && EU_AIRLINE_CODES.indexOf(airlineCodeUpper) < 0) {
+    return {
+      casoId:     lead.casoId,
+      decision:   'RECHAZADO',
+      scoreTotal: 0,
+      motivo:     'Fuera del ámbito CE 261/2004: ruta no-UE y aerolínea no-UE.',
+      compensacion: 0,
+      distanciaKm: distanciaKm,
+      flightData: flightData
+    };
+  }
+
   // Calcular compensación
   var comp = calcularCompensacion(distanciaKm, lead.tipoIncidencia, lead.horasRetraso, intraEU);
   
