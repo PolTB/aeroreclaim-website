@@ -124,7 +124,8 @@ function processNewOnboardingCases() {
     var estado = String(row[OB_CONFIG.COL.ESTADO - 1] || '').toUpperCase().trim();
     var email = String(row[OB_CONFIG.COL.EMAIL - 1] || '').trim();
     var casoId = String(row[OB_CONFIG.COL.CASO_ID - 1] || '').trim();
-    
+    var caseId = casoId; // alias defensivo AER-75
+
     // Solo procesar estado PENDIENTE
     if (estado !== 'PENDIENTE') continue;
     if (!email || email.indexOf('@') < 0) continue;
@@ -971,6 +972,61 @@ function checkOnboardingTriggers() {
   } else {
     Logger.log('✅ Todos los triggers de onboarding están instalados.');
   }
-  
+
   return found;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// doPost — Webhook updateCaseStatus (AER-75)
+// ═══════════════════════════════════════════════════════════════
+
+function doPost(e) {
+  try {
+    var payload = JSON.parse(e.postData.contents);
+    if (payload.action !== 'updateCaseStatus') {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'Unknown action' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var casoId = String(payload.casoId || '').trim();
+    var newStatus = String(payload.status || '').trim();
+    var notes = String(payload.notes || '').trim();
+
+    if (!casoId || !newStatus) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'casoId and status required' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var ss = SpreadsheetApp.openById(OB_CONFIG.SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(OB_CONFIG.SHEET_ONBOARDING);
+    if (!sheet) throw new Error('Sheet Onboarding_Queue not found');
+
+    var data = sheet.getDataRange().getValues();
+    var found = false;
+    for (var i = 1; i < data.length; i++) {
+      var rowCasoId = String(data[i][OB_CONFIG.COL.CASO_ID - 1] || '').trim();
+      if (rowCasoId === casoId) {
+        var sheetRow = i + 1;
+        sheet.getRange(sheetRow, OB_CONFIG.COL.ESTADO).setValue(newStatus);  // col P
+        if (notes) {
+          sheet.getRange(sheetRow, OB_CONFIG.COL.NOTAS).setValue(notes);     // col Z
+        }
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: 'casoId not found: ' + casoId }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ success: true, casoId: casoId, newStatus: newStatus }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
