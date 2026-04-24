@@ -10,8 +10,8 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-// ─── CONFIGURACIÓN ─────────────────────────────────────────────
-const CONFIG = {
+// ─── CONFIGURACIÓN ────────────────────────────────────────────
+const LEGAL_CONFIG = {
   SHEET_LEADS:      "Leads",
   SHEET_SCORED:     "Scored_Leads",
   SHEET_REVIEW:     "Review_Queue",
@@ -132,7 +132,7 @@ function onLeadInserted(e) {
   if (e && e.changeType !== "INSERT_ROW") return;
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var leadsSheet = ss.getSheetByName(CONFIG.SHEET_LEADS);
+  var leadsSheet = ss.getSheetByName(LEGAL_CONFIG.SHEET_LEADS);
   if (!leadsSheet) return;
   
   var lastRow = leadsSheet.getLastRow();
@@ -163,18 +163,18 @@ function onLeadInserted(e) {
     }
     
     // Marcar como procesado en Leads
-    leadsSheet.getRange(lastRow, CONFIG.COL.SCORED).setValue("SCORED");
-    leadsSheet.getRange(lastRow, CONFIG.COL.ESTADO).setValue(result.decision);
+    leadsSheet.getRange(lastRow, LEGAL_CONFIG.COL.SCORED).setValue("SCORED");
+    leadsSheet.getRange(lastRow, LEGAL_CONFIG.COL.ESTADO).setValue(result.decision);
     
   } catch(error) {
     Logger.log("❌ Error en scoring: " + error.toString());
     MailApp.sendEmail(
-      CONFIG.ADMIN_EMAIL,
+      LEGAL_CONFIG.ADMIN_EMAIL,
       "⚠️ Error Agente 2 AeroReclaim",
       "Lead: " + lead.email + "\nError: " + error.toString() + "\nStack: " + error.stack
     );
     // Marcar para revisión manual
-    leadsSheet.getRange(lastRow, CONFIG.COL.ESTADO).setValue("ERROR");
+    leadsSheet.getRange(lastRow, LEGAL_CONFIG.COL.ESTADO).setValue("ERROR");
   }
 }
 
@@ -187,14 +187,14 @@ function readLead(sheet, row) {
   var values = sheet.getRange(row, 1, 1, 11).getValues()[0];
   
   // Extraer código IATA de aerolínea
-  var airlineName = String(values[CONFIG.COL.AEROLINEA - 1] || "");
+  var airlineName = String(values[LEGAL_CONFIG.COL.AEROLINEA - 1] || "");
   var airlineCode = AIRLINE_CODES[airlineName] || extractAirlineCode(airlineName);
   
   // Extraer origen/destino del número de vuelo si es posible
-  var flightNumber = String(values[CONFIG.COL.VUELO - 1] || "");
+  var flightNumber = String(values[LEGAL_CONFIG.COL.VUELO - 1] || "");
   
   // Parsear incidencia
-  var incidencia = String(values[CONFIG.COL.INCIDENCIA - 1] || "").toLowerCase();
+  var incidencia = String(values[LEGAL_CONFIG.COL.INCIDENCIA - 1] || "").toLowerCase();
   var tipoIncidencia = "retraso"; // default
   var horasRetraso = 4; // default
   
@@ -215,17 +215,17 @@ function readLead(sheet, row) {
   
   return {
     row: row,
-    timestamp: values[CONFIG.COL.TIMESTAMP - 1],
-    nombre: String(values[CONFIG.COL.NOMBRE - 1] || ""),
-    email: String(values[CONFIG.COL.EMAIL - 1] || ""),
+    timestamp: values[LEGAL_CONFIG.COL.TIMESTAMP - 1],
+    nombre: String(values[LEGAL_CONFIG.COL.NOMBRE - 1] || ""),
+    email: String(values[LEGAL_CONFIG.COL.EMAIL - 1] || ""),
     vuelo: flightNumber,
-    fechaVuelo: values[CONFIG.COL.FECHA_VUELO - 1],
+    fechaVuelo: values[LEGAL_CONFIG.COL.FECHA_VUELO - 1],
     aerolinea: airlineName,
     airlineCode: airlineCode,
     incidencia: incidencia,
     tipoIncidencia: tipoIncidencia,
     horasRetraso: horasRetraso,
-    compensacionPrev: String(values[CONFIG.COL.COMPENSACION - 1] || ""),
+    compensacionPrev: String(values[LEGAL_CONFIG.COL.COMPENSACION - 1] || ""),
     referralSource: String(values[9] || ""),
     scored: String(values[10] || "") === "SCORED"
   };
@@ -385,8 +385,6 @@ function scoreCase(lead) {
     origen = flightData.origin;
     destino = flightData.destination;
   }
-  // Si no tenemos de la API, intentar extraer del número de vuelo y datos del pre-validador
-  // El pre-validador actual no envía origen/destino separados, así que usamos lo que hay
   
   // Calcular distancia si tenemos ambos aeropuertos
   var distanciaKm = 0;
@@ -398,12 +396,11 @@ function scoreCase(lead) {
     distanciaKm = haversineDistance(origCoords.lat, origCoords.lon, destCoords.lat, destCoords.lon);
     intraEU = isIntraEU(origen, destino);
   } else {
-    // Fallback: usar compensación del pre-validador para estimar distancia
     var compPrev = lead.compensacionPrev;
     if (compPrev.indexOf("600") >= 0) { distanciaKm = 4000; }
     else if (compPrev.indexOf("400") >= 0) { distanciaKm = 2500; }
     else { distanciaKm = 1000; }
-    intraEU = true; // Asumir intra-UE por defecto (mercado español)
+    intraEU = true;
   }
   
   // Rechazar si ruta no-UE Y aerolínea no-UE (fuera del ámbito CE 261/2004)
@@ -421,115 +418,86 @@ function scoreCase(lead) {
     };
   }
 
-  // Calcular compensación
   var comp = calcularCompensacion(distanciaKm, lead.tipoIncidencia, lead.horasRetraso, intraEU);
   
-  // ─── F1: ELEGIBILIDAD BASE (0-30) ───────────────────────────
+  // ─── F1: ELEGIBILIDAD BASE (0-30) ────────────────────────────────────────
   var f1 = 0;
-  
-  // ¿Vuelo verificado?
   if (flightData.found === true) f1 += 10;
-  else f1 += 3; // Datos no verificados pero declarados
-  
-  // ¿Cubierto por CE 261?
+  else f1 += 3;
   var cubierto = false;
   if (origen && isEUAirport(origen)) { cubierto = true; f1 += 10; }
-  else if (destino && isEUAirport(destino)) { cubierto = true; f1 += 8; } // Necesita aerolínea EU
-  else { f1 += 5; } // Asumir cubierto (mercado español)
-  
-  // ¿Retraso suficiente?
+  else if (destino && isEUAirport(destino)) { cubierto = true; f1 += 8; }
+  else { f1 += 5; }
   var retrasoVerificado = flightData.found === true ? flightData.delayHours : lead.horasRetraso;
   if (lead.tipoIncidencia === "cancelacion" || lead.tipoIncidencia === "overbooking") {
-    f1 += 10; // Siempre elegible
+    f1 += 10;
   } else if (retrasoVerificado >= 3) {
     f1 += 10;
   } else if (retrasoVerificado >= 2) {
-    f1 += 5; // Borderline
+    f1 += 5;
   } else {
-    f1 += 0; // No elegible
+    f1 += 0;
   }
   
-  // ─── F2: TIPO DE INCIDENCIA (0-20) ──────────────────────────
+  // ─── F2: TIPO DE INCIDENCIA (0-20) ──────────────────────────────────
   var f2 = 0;
   switch(lead.tipoIncidencia) {
-    case "overbooking":       f2 = 20; break; // Más fácil de ganar
+    case "overbooking":       f2 = 20; break;
     case "cancelacion":       f2 = 18; break;
     case "retraso":           f2 = 14; break;
     case "conexion_perdida":  f2 = 10; break;
     default:                  f2 = 10; break;
   }
   
-  // ─── F3: FUERZA MAYOR (0-20, penalización) ──────────────────
-  var f3 = 18; // Empezar optimista, penalizar si hay indicios
-  
-  // Si la API confirma el vuelo pero NO hay retraso significativo
+  // ─── F3: FUERZA MAYOR (0-20, penalización) ─────────────────────────
+  var f3 = 18;
   if (flightData.found === true && !flightData.cancelled && flightData.delayHours < 2) {
-    f3 = 5; // Probablemente no hay caso real
+    f3 = 5;
   }
   
-  // No podemos verificar fuerza mayor sin datos detallados,
-  // así que damos beneficio de la duda al pasajero
-  
-  // ─── F4: AEROLÍNEA (0-15) ──────────────────────────────────
+  // ─── F4: AEROLÍNEA (0-15) ──────────────────────────────────────────
   var profile = AIRLINE_PROFILES[lead.airlineCode] || AIRLINE_PROFILES["DEFAULT"];
-  var f4 = 8; // Base
+  var f4 = 8;
   f4 = Math.max(0, Math.min(15, f4 + profile.scoreBonus));
   
-  // ─── F5: ANTIGÜEDAD (0-10) ─────────────────────────────────
+  // ─── F5: ANTIGÜEDAD (0-10) ─────────────────────────────────────────
   var f5 = 10;
   var fechaVuelo = new Date(lead.fechaVuelo);
   var hoy = new Date();
   var diasPasados = Math.floor((hoy - fechaVuelo) / (1000 * 60 * 60 * 24));
   var anosPasados = diasPasados / 365;
+  if (anosPasados > 5) { f5 = 0; }
+  else if (anosPasados > 4) { f5 = 2; }
+  else if (anosPasados > 3) { f5 = 5; }
+  else if (anosPasados > 2) { f5 = 7; }
+  else if (anosPasados > 1) { f5 = 9; }
+  else { f5 = 10; }
   
-  if (anosPasados > 5) {
-    f5 = 0; // Prescrito en España
-  } else if (anosPasados > 4) {
-    f5 = 2; // Urgente, poco margen
-  } else if (anosPasados > 3) {
-    f5 = 5;
-  } else if (anosPasados > 2) {
-    f5 = 7;
-  } else if (anosPasados > 1) {
-    f5 = 9;
-  } else {
-    f5 = 10; // Reciente, máximo score
-  }
+  // ─── F6: RECLAMACIÓN PREVIA (0-5) ────────────────────────────────
+  var f6 = 5;
   
-  // ─── F6: RECLAMACIÓN PREVIA (0-5) ──────────────────────────
-  var f6 = 5; // Sin datos, asumir que no hay reclamación previa
-  
-  // ─── SCORE TOTAL ───────────────────────────────────────────
   var scoreTotal = f1 + f2 + f3 + f4 + f5 + f6;
   scoreTotal = Math.max(0, Math.min(100, scoreTotal));
   
-  // ─── DECISIÓN ──────────────────────────────────────────────
   var decision, motivo;
-  
-  // Override: prescrito → rechazar siempre
   if (anosPasados > 5) {
     decision = "REJECTED";
     motivo = "Caso prescrito: han pasado más de 5 años desde el vuelo (límite legal en España).";
     scoreTotal = Math.min(scoreTotal, 20);
-  }
-  // Override: retraso < 3h verificado → rechazar
-  else if (flightData.found === true && !flightData.cancelled && flightData.delayHours < 3 && lead.tipoIncidencia === "retraso") {
+  } else if (flightData.found === true && !flightData.cancelled && flightData.delayHours < 3 && lead.tipoIncidencia === "retraso") {
     decision = "REJECTED";
     motivo = "Retraso verificado de " + flightData.delayHours.toFixed(1) + "h — inferior a las 3h requeridas por CE 261/2004.";
     scoreTotal = Math.min(scoreTotal, 30);
-  }
-  else if (scoreTotal >= CONFIG.SCORE_ACCEPT) {
+  } else if (scoreTotal >= LEGAL_CONFIG.SCORE_ACCEPT) {
     decision = "ACCEPTED";
     motivo = "Caso aceptado automáticamente. Score " + scoreTotal + "/100.";
-  }
-  else if (scoreTotal >= CONFIG.SCORE_REVIEW) {
+  } else if (scoreTotal >= LEGAL_CONFIG.SCORE_REVIEW) {
     decision = "REVIEW";
     motivo = "Score " + scoreTotal + "/100 — requiere revisión manual. ";
     if (f1 < 15) motivo += "Elegibilidad base baja. ";
     if (f3 < 10) motivo += "Posible fuerza mayor. ";
     if (f4 < 5) motivo += "Aerolínea con alta litigiosidad. ";
-  }
-  else {
+  } else {
     decision = "REJECTED";
     motivo = "Score " + scoreTotal + "/100 — caso no viable. ";
     if (f1 < 10) motivo += "No cumple requisitos CE 261/2004. ";
@@ -559,72 +527,37 @@ function scoreCase(lead) {
 // ═══════════════════════════════════════════════════════════════
 
 function writeScoredLead(ss, lead, result) {
-  var sheet = ss.getSheetByName(CONFIG.SHEET_SCORED);
+  var sheet = ss.getSheetByName(LEGAL_CONFIG.SHEET_SCORED);
   sheet.appendRow([
-    result.casoId,
-    new Date(),
-    lead.nombre,
-    lead.email,
-    lead.vuelo,
-    lead.fechaVuelo,
-    lead.aerolinea,
-    result.origen || "",
-    result.destino || "",
-    lead.incidencia,
-    lead.horasRetraso,
-    result.distanciaKm,
-    result.intraEU ? "Sí" : "No",
-    result.compensacion,
-    result.categoriaVuelo,
-    result.scoreTotal,
+    result.casoId, new Date(), lead.nombre, lead.email, lead.vuelo, lead.fechaVuelo,
+    lead.aerolinea, result.origen || "", result.destino || "", lead.incidencia,
+    lead.horasRetraso, result.distanciaKm, result.intraEU ? "Sí" : "No",
+    result.compensacion, result.categoriaVuelo, result.scoreTotal,
     result.f1, result.f2, result.f3, result.f4, result.f5, result.f6,
-    result.decision,
-    result.motivo,
-    result.vueloVerificado ? "Sí" : "No",
+    result.decision, result.motivo, result.vueloVerificado ? "Sí" : "No",
     result.fuenteVerificacion
   ]);
 }
 
 function writeOnboardingQueue(ss, lead, result) {
-  var sheet = ss.getSheetByName(CONFIG.SHEET_ONBOARDING);
+  var sheet = ss.getSheetByName(LEGAL_CONFIG.SHEET_ONBOARDING);
   var honorarios = Math.round(result.compensacion * 0.25 * 1.21 * 100) / 100;
   sheet.appendRow([
-    result.casoId,
-    new Date(),
-    lead.nombre,
-    lead.email,
-    "", // Teléfono — no lo tenemos en el formulario actual
-    lead.vuelo,
-    lead.fechaVuelo,
-    lead.aerolinea,
-    result.origen || "",
-    result.destino || "",
-    lead.incidencia,
-    result.compensacion,
-    honorarios,
-    result.scoreTotal,
-    result.distanciaKm,
-    "PENDIENTE"
+    result.casoId, new Date(), lead.nombre, lead.email,
+    "", lead.vuelo, lead.fechaVuelo, lead.aerolinea,
+    result.origen || "", result.destino || "", lead.incidencia,
+    result.compensacion, honorarios, result.scoreTotal, result.distanciaKm, "PENDIENTE"
   ]);
 }
 
 function writeReviewQueue(ss, lead, result) {
-  var sheet = ss.getSheetByName(CONFIG.SHEET_REVIEW);
+  var sheet = ss.getSheetByName(LEGAL_CONFIG.SHEET_REVIEW);
   var fechaLimite = new Date();
-  fechaLimite.setDate(fechaLimite.getDate() + 3); // 3 días para revisar
-  
+  fechaLimite.setDate(fechaLimite.getDate() + 3);
   sheet.appendRow([
-    result.casoId,
-    new Date(),
-    lead.nombre,
-    lead.email,
-    lead.vuelo,
-    result.scoreTotal,
-    result.motivo,
-    CONFIG.ADMIN_EMAIL,
-    fechaLimite,
-    "", // Decisión manual (vacío)
-    ""  // Notas
+    result.casoId, new Date(), lead.nombre, lead.email, lead.vuelo,
+    result.scoreTotal, result.motivo, LEGAL_CONFIG.ADMIN_EMAIL,
+    fechaLimite, "", ""
   ]);
 }
 
@@ -634,39 +567,31 @@ function writeReviewQueue(ss, lead, result) {
 // ═══════════════════════════════════════════════════════════════
 
 function sendAcceptanceNotification(lead, result) {
-  // Notificar al admin
   MailApp.sendEmail(
-    CONFIG.NOTIFICATION_EMAIL,
+    LEGAL_CONFIG.NOTIFICATION_EMAIL,
     "✅ Nuevo caso ACEPTADO — " + result.casoId,
     "Caso aceptado automáticamente.\n\n" +
-    "Pasajero: " + lead.nombre + "\n" +
-    "Email: " + lead.email + "\n" +
+    "Pasajero: " + lead.nombre + "\nEmail: " + lead.email + "\n" +
     "Vuelo: " + lead.vuelo + " (" + lead.fechaVuelo + ")\n" +
-    "Aerolínea: " + lead.aerolinea + "\n" +
-    "Compensación: " + result.compensacion + "€\n" +
-    "Score: " + result.scoreTotal + "/100\n" +
-    "Caso ID: " + result.casoId + "\n\n" +
+    "Aerolínea: " + lead.aerolinea + "\nCompensación: " + result.compensacion + "€\n" +
+    "Score: " + result.scoreTotal + "/100\nCaso ID: " + result.casoId + "\n\n" +
     "El caso está en la cola de Onboarding."
   );
 }
 
 function sendReviewNotification(lead, result) {
   MailApp.sendEmail(
-    CONFIG.NOTIFICATION_EMAIL,
+    LEGAL_CONFIG.NOTIFICATION_EMAIL,
     "🔍 Caso para REVISIÓN — " + result.casoId,
     "Caso requiere revisión manual.\n\n" +
-    "Pasajero: " + lead.nombre + "\n" +
-    "Email: " + lead.email + "\n" +
+    "Pasajero: " + lead.nombre + "\nEmail: " + lead.email + "\n" +
     "Vuelo: " + lead.vuelo + " (" + lead.fechaVuelo + ")\n" +
-    "Aerolínea: " + lead.aerolinea + "\n" +
-    "Score: " + result.scoreTotal + "/100\n" +
-    "Motivo: " + result.motivo + "\n" +
-    "Caso ID: " + result.casoId
+    "Aerolínea: " + lead.aerolinea + "\nScore: " + result.scoreTotal + "/100\n" +
+    "Motivo: " + result.motivo + "\nCaso ID: " + result.casoId
   );
 }
 
 function sendRejectionEmail(lead, result) {
-  // Email al pasajero explicando por qué no podemos tramitar su caso
   if (lead.email && lead.email.indexOf("@") > 0 && lead.email.indexOf("test") < 0) {
     MailApp.sendEmail({
       to: lead.email,
@@ -678,25 +603,19 @@ function sendRejectionEmail(lead, result) {
         "lamentamos informarte de que, según nuestra evaluación, tu caso <strong>no reúne los requisitos</strong> " +
         "para tramitar una reclamación con garantías de éxito.</p>" +
         "<p><strong>Motivo:</strong> " + result.motivo + "</p>" +
-        "<p>Te recomendamos:</p>" +
-        "<ul>" +
+        "<p>Te recomendamos:</p><ul>" +
         "<li>Intentar reclamar directamente a " + lead.aerolinea + " a través de su web oficial</li>" +
         "<li>Si la rechazan, puedes acudir a la <a href='https://www.seguridadaerea.gob.es/es/ambitos/los-derechos-de-los-pasajeros-aereos/reclamaciones'>AESA</a> (gratuito pero lento)</li>" +
-        "</ul>" +
-        "<p>Si tu situación cambia o tienes otro vuelo afectado, no dudes en volver a consultarnos en <a href='https://aeroreclaim.com'>aeroreclaim.com</a>.</p>" +
+        "</ul><p>Si tu situación cambia o tienes otro vuelo afectado, no dudes en volver a consultarnos en <a href='https://aeroreclaim.com'>aeroreclaim.com</a>.</p>" +
         "<p>Un saludo,<br>El equipo de AeroReclaim</p>"
     });
   }
-  
-  // Notificar al admin
   MailApp.sendEmail(
-    CONFIG.NOTIFICATION_EMAIL,
+    LEGAL_CONFIG.NOTIFICATION_EMAIL,
     "❌ Caso RECHAZADO — " + result.casoId,
     "Caso rechazado automáticamente.\n\n" +
     "Pasajero: " + lead.nombre + " (" + lead.email + ")\n" +
-    "Vuelo: " + lead.vuelo + "\n" +
-    "Score: " + result.scoreTotal + "/100\n" +
-    "Motivo: " + result.motivo
+    "Vuelo: " + lead.vuelo + "\nScore: " + result.scoreTotal + "/100\nMotivo: " + result.motivo
   );
 }
 
@@ -707,48 +626,31 @@ function sendRejectionEmail(lead, result) {
 
 function testScoring() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var leadsSheet = ss.getSheetByName(CONFIG.SHEET_LEADS);
+  var leadsSheet = ss.getSheetByName(LEGAL_CONFIG.SHEET_LEADS);
   var lastRow = leadsSheet.getLastRow();
-  
   var lead = readLead(leadsSheet, lastRow);
   Logger.log("Lead leído: " + JSON.stringify(lead));
-  
   var result = scoreCase(lead);
   Logger.log("Resultado: " + JSON.stringify(result, null, 2));
-  
   return result;
 }
 
-/**
- * Test con datos ficticios sin leer del sheet
- */
 function testScoringMock() {
   var lead = {
-    row: 2,
-    timestamp: new Date(),
-    nombre: "Test Pasajero",
-    email: "test@example.com",
-    vuelo: "IB3456",
-    fechaVuelo: "2025-11-15",
-    aerolinea: "Iberia",
-    airlineCode: "IB",
-    incidencia: "retraso >3h",
-    tipoIncidencia: "retraso",
-    horasRetraso: 4,
-    compensacionPrev: "250€",
-    scored: false
+    row: 2, timestamp: new Date(), nombre: "Test Pasajero", email: "test@example.com",
+    vuelo: "IB3456", fechaVuelo: "2025-11-15", aerolinea: "Iberia", airlineCode: "IB",
+    incidencia: "retraso >3h", tipoIncidencia: "retraso", horasRetraso: 4,
+    compensacionPrev: "250€", scored: false
   };
-  
   var result = scoreCase(lead);
   Logger.log("=== TEST MOCK ===");
   Logger.log("Score: " + result.scoreTotal + "/100");
   Logger.log("Decisión: " + result.decision);
   Logger.log("Motivo: " + result.motivo);
-  Logger.log("F1=" + result.f1 + " F2=" + result.f2 + " F3=" + result.f3 + 
+  Logger.log("F1=" + result.f1 + " F2=" + result.f2 + " F3=" + result.f3 +
              " F4=" + result.f4 + " F5=" + result.f5 + " F6=" + result.f6);
   Logger.log("Compensación: " + result.compensacion + "€");
   Logger.log("Full: " + JSON.stringify(result, null, 2));
-  
   return result;
 }
 
@@ -757,54 +659,31 @@ function testScoringMock() {
 // SETUP: Cargar base de aeropuertos (ejecutar UNA VEZ)
 // ═══════════════════════════════════════════════════════════════
 
-/**
- * Ejecutar esta función UNA VEZ para cargar la base de aeropuertos.
- * Se debe pegar el JSON en la variable AIRPORT_DATA_JSON antes de ejecutar.
- * 
- * INSTRUCCIONES:
- * 1. Abrir el archivo airport_db_compact.json
- * 2. Copiar todo el contenido
- * 3. Pegarlo en la variable AIRPORT_DATA_JSON de abajo
- * 4. Ejecutar esta función
- */
 function loadAirportDB() {
-  // El JSON se carga desde un archivo separado para no saturar este script
-  // Ver función loadAirportDBFromURL() como alternativa
   var props = PropertiesService.getScriptProperties();
-  
-  // Verificar si ya está cargada
   var existing = props.getProperty("AIRPORT_DB");
   if (existing) {
     var count = Object.keys(JSON.parse(existing)).length;
     Logger.log("Base de aeropuertos ya cargada: " + count + " aeropuertos.");
     return;
   }
-  
   Logger.log("⚠️ La base de aeropuertos NO está cargada. Ejecuta loadAirportDBFromURL() para cargarla.");
 }
 
-/**
- * Carga la base de aeropuertos desde GitHub (4 partes).
- * Ejecutar UNA VEZ para poblar Script Properties.
- */
 function loadAirportDBFromURL() {
   var baseUrl = "https://raw.githubusercontent.com/PolTB/aeroreclaim-website/main/data/";
   var parts = ["airports_part_a.json", "airports_part_b.json", "airports_part_c.json", "airports_part_d.json"];
   var merged = {};
-  
   for (var i = 0; i < parts.length; i++) {
     var response = UrlFetchApp.fetch(baseUrl + parts[i], { muteHttpExceptions: true });
     if (response.getResponseCode() === 200) {
       var partData = JSON.parse(response.getContentText());
-      for (var key in partData) {
-        merged[key] = partData[key];
-      }
+      for (var key in partData) { merged[key] = partData[key]; }
       Logger.log("✅ Cargada " + parts[i] + ": " + Object.keys(partData).length + " aeropuertos");
     } else {
       Logger.log("❌ Error cargando " + parts[i] + ": HTTP " + response.getResponseCode());
     }
   }
-  
   var totalKeys = Object.keys(merged).length;
   if (totalKeys > 700) {
     var jsonStr = JSON.stringify(merged);
@@ -826,77 +705,40 @@ function setAirportDB(jsonString) {
 // SCORING CON RETRY LOGIC — scorePendingLeads()
 // ═══════════════════════════════════════════════════════════════
 
-/**
- * scorePendingLeads()
- *
- * Función de recuperación y scoring batch para leads PENDING.
- * Diseñada para ejecutarse via trigger time-based (ej. cada 15 min).
- *
- * FEATURES:
- * - Retry logic con exponential backoff para llamadas AeroDataBox
- * - Timeout guard: para antes de agotar el límite de 6 min de GAS
- * - Dead-letter queue: leads que fallan 3+ veces se marcan PENDING_MANUAL
- * - Idempotente: no reprocesa leads ya marcados SCORED
- * - Procesa máx. BATCH_SIZE leads por ejecución para evitar timeouts
- *
- * INSTALAR TRIGGER:
- *   Ejecutar installScoringTrigger() una vez desde el editor GAS.
- */
-
 var SCORING_CONFIG = {
-  BATCH_SIZE:        10,      // Leads por ejecución (no agotar cuota AeroDataBox)
-  MAX_RETRIES:       3,       // Intentos por lead antes de PENDING_MANUAL
-  RETRY_DELAY_MS:    2000,    // Delay base entre reintentos (exponential backoff)
-  TIMEOUT_GUARD_MS:  300000,  // Parar si llevamos >5 min ejecutando (GAS límite 6 min)
-  PENDING_STATES:    ['PENDING', '', null, undefined]  // Estados que requieren scoring
+  BATCH_SIZE:        10,
+  MAX_RETRIES:       3,
+  RETRY_DELAY_MS:    2000,
+  TIMEOUT_GUARD_MS:  300000,
+  PENDING_STATES:    ['PENDING', '', null, undefined]
 };
 
-/**
- * Instalar trigger time-based para scorePendingLeads.
- * Ejecutar UNA VEZ manualmente desde el editor GAS.
- */
 function installScoringTrigger() {
-  // Eliminar triggers previos de scorePendingLeads
   ScriptApp.getProjectTriggers().forEach(function(t) {
     if (t.getHandlerFunction() === 'scorePendingLeads') {
       ScriptApp.deleteTrigger(t);
       Logger.log('Trigger previo scorePendingLeads eliminado.');
     }
   });
-
-  ScriptApp.newTrigger('scorePendingLeads')
-    .timeBased()
-    .everyMinutes(15)
-    .create();
-
+  ScriptApp.newTrigger('scorePendingLeads').timeBased().everyMinutes(15).create();
   Logger.log('✅ Trigger scorePendingLeads instalado: cada 15 minutos.');
 }
 
-/**
- * Wrapper con retry logic para verificarVuelo().
- * En caso de error de red o timeout de AeroDataBox, reintenta con backoff.
- */
 function verificarVueloConRetry(flightNumber, fechaVuelo, maxRetries) {
   var retries = maxRetries || SCORING_CONFIG.MAX_RETRIES;
   var lastErr = null;
-
   for (var attempt = 1; attempt <= retries; attempt++) {
     try {
       var result = verificarVuelo(flightNumber, fechaVuelo);
-      // Si la API respondió (aunque sea 404), no es error de red → devolver
       if (result) return result;
     } catch (e) {
       lastErr = e;
-      Logger.log('[retry] Intento ' + attempt + '/' + retries +
-                 ' fallido para ' + flightNumber + ': ' + e.toString());
+      Logger.log('[retry] Intento ' + attempt + '/' + retries + ' fallido para ' + flightNumber + ': ' + e.toString());
       if (attempt < retries) {
-        // Exponential backoff: 2s, 4s, 8s
         Utilities.sleep(SCORING_CONFIG.RETRY_DELAY_MS * Math.pow(2, attempt - 1));
       }
     }
   }
-
-  // Todos los intentos agotados → devolver objeto de fallo limpio
   Logger.log('[retry] AeroDataBox agotó ' + retries + ' intentos para ' + flightNumber);
   return {
     found: false,
@@ -905,109 +747,68 @@ function verificarVueloConRetry(flightNumber, fechaVuelo, maxRetries) {
   };
 }
 
-/**
- * scorePendingLeads()
- * Función principal — disparada por trigger time-based cada 15 min.
- */
 function scorePendingLeads() {
   var startTime = Date.now();
   var ss        = SpreadsheetApp.openById('10zEyvd3P57DidwOi2UM1VnXHDnPrIWMnpTSbdZ4zX-E');
-  var leadsSheet = ss.getSheetByName(CONFIG.SHEET_LEADS);
-
-  if (!leadsSheet) {
-    Logger.log('[scorePendingLeads] ERROR: tab Leads no encontrado.');
-    return;
-  }
-
+  var leadsSheet = ss.getSheetByName(LEGAL_CONFIG.SHEET_LEADS);
+  if (!leadsSheet) { Logger.log('[scorePendingLeads] ERROR: tab Leads no encontrado.'); return; }
   var lastRow = leadsSheet.getLastRow();
-  if (lastRow < 2) {
-    Logger.log('[scorePendingLeads] Sin leads. Saliendo.');
-    return;
-  }
+  if (lastRow < 2) { Logger.log('[scorePendingLeads] Sin leads. Saliendo.'); return; }
 
-  // Leer todas las filas de leads
   var allData  = leadsSheet.getRange(2, 1, lastRow - 1, 11).getValues();
   var pending  = [];
-
   for (var i = 0; i < allData.length; i++) {
-    var scoredVal = String(allData[i][CONFIG.COL.SCORED - 1] || '').trim();
-    var estadoVal = String(allData[i][CONFIG.COL.ESTADO - 1] || '').trim();
-    var emailVal  = String(allData[i][CONFIG.COL.EMAIL  - 1] || '').trim();
-
-    // Excluir TEST_CLOSED, SCORED, ERROR_PERMANENT, PENDING_MANUAL y filas vacías
+    var scoredVal = String(allData[i][LEGAL_CONFIG.COL.SCORED - 1] || '').trim();
+    var estadoVal = String(allData[i][LEGAL_CONFIG.COL.ESTADO - 1] || '').trim();
+    var emailVal  = String(allData[i][LEGAL_CONFIG.COL.EMAIL  - 1] || '').trim();
     if (scoredVal === 'SCORED' || scoredVal === 'TEST_CLOSED') continue;
     if (estadoVal === 'PENDING_MANUAL' || estadoVal === 'ERROR_PERMANENT') continue;
     if (!emailVal || emailVal === '') continue;
-
-    pending.push({ rowIndex: i + 2, data: allData[i] }); // rowIndex es 1-based en Sheets
+    pending.push({ rowIndex: i + 2, data: allData[i] });
   }
 
-  if (pending.length === 0) {
-    Logger.log('[scorePendingLeads] 0 leads pendientes. Nada que procesar.');
-    return;
-  }
+  if (pending.length === 0) { Logger.log('[scorePendingLeads] 0 leads pendientes.'); return; }
+  Logger.log('[scorePendingLeads] ' + pending.length + ' leads pendientes. Procesando batch de ' + Math.min(pending.length, SCORING_CONFIG.BATCH_SIZE) + '.');
 
-  Logger.log('[scorePendingLeads] ' + pending.length + ' leads pendientes. ' +
-             'Procesando batch de ' + Math.min(pending.length, SCORING_CONFIG.BATCH_SIZE) + '.');
-
-  var processed = 0;
-  var errors    = 0;
-
+  var processed = 0, errors = 0;
   for (var j = 0; j < pending.length && processed < SCORING_CONFIG.BATCH_SIZE; j++) {
-
-    // ── TIMEOUT GUARD ───────────────────────────────────────────
     if (Date.now() - startTime > SCORING_CONFIG.TIMEOUT_GUARD_MS) {
-      Logger.log('[scorePendingLeads] ⏱️ Timeout guard: ' +
-                 Math.round((Date.now() - startTime) / 1000) + 's. Parando batch.');
+      Logger.log('[scorePendingLeads] ⏱️ Timeout guard: ' + Math.round((Date.now() - startTime) / 1000) + 's. Parando batch.');
       break;
     }
-
-    var item       = pending[j];
-    var actualRow  = item.rowIndex;
-    var rowData    = item.data;
-
-    // Re-leer estado en tiempo real para evitar duplicados (otra ejecución concurrente)
-    var currentScored = String(leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).getValue() || '').trim();
+    var item = pending[j], actualRow = item.rowIndex, rowData = item.data;
+    var currentScored = String(leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.SCORED).getValue() || '').trim();
     if (currentScored === 'SCORED' || currentScored === 'TEST_CLOSED') continue;
 
-    // Construir objeto lead
     var lead = {
-      row:             actualRow,
-      timestamp:       rowData[CONFIG.COL.TIMESTAMP - 1],
-      nombre:          String(rowData[CONFIG.COL.NOMBRE - 1]      || ''),
-      email:           String(rowData[CONFIG.COL.EMAIL - 1]       || ''),
-      vuelo:           String(rowData[CONFIG.COL.VUELO - 1]       || ''),
-      fechaVuelo:      rowData[CONFIG.COL.FECHA_VUELO - 1],
-      aerolinea:       String(rowData[CONFIG.COL.AEROLINEA - 1]   || ''),
-      incidencia:      String(rowData[CONFIG.COL.INCIDENCIA - 1]  || '').toLowerCase(),
-      compensacionPrev:String(rowData[CONFIG.COL.COMPENSACION - 1]|| ''),
-      referralSource:  String(rowData[9] || ''),
-      scored:          false
+      row: actualRow,
+      timestamp: rowData[LEGAL_CONFIG.COL.TIMESTAMP - 1],
+      nombre: String(rowData[LEGAL_CONFIG.COL.NOMBRE - 1] || ''),
+      email: String(rowData[LEGAL_CONFIG.COL.EMAIL - 1] || ''),
+      vuelo: String(rowData[LEGAL_CONFIG.COL.VUELO - 1] || ''),
+      fechaVuelo: rowData[LEGAL_CONFIG.COL.FECHA_VUELO - 1],
+      aerolinea: String(rowData[LEGAL_CONFIG.COL.AEROLINEA - 1] || ''),
+      incidencia: String(rowData[LEGAL_CONFIG.COL.INCIDENCIA - 1] || '').toLowerCase(),
+      compensacionPrev: String(rowData[LEGAL_CONFIG.COL.COMPENSACION - 1] || ''),
+      referralSource: String(rowData[9] || ''),
+      scored: false
     };
-    lead.airlineCode   = AIRLINE_CODES[lead.aerolinea] || extractAirlineCode(lead.aerolinea);
-    lead.tipoIncidencia = 'retraso';
-    lead.horasRetraso   = 4;
-    if (lead.incidencia.indexOf('cancel') >= 0)            { lead.tipoIncidencia = 'cancelacion'; lead.horasRetraso = 99; }
-    else if (lead.incidencia.indexOf('overbooking') >= 0)  { lead.tipoIncidencia = 'overbooking'; lead.horasRetraso = 99; }
-    else if (lead.incidencia.indexOf('conexi') >= 0)       { lead.tipoIncidencia = 'conexion_perdida'; }
-    else if (lead.incidencia.indexOf('>3') >= 0 ||
-             lead.incidencia.indexOf('3h') >= 0)           { lead.horasRetraso = 4; }
-    else if (lead.incidencia.indexOf('>5') >= 0 ||
-             lead.incidencia.indexOf('5h') >= 0)           { lead.horasRetraso = 6; }
+    lead.airlineCode = AIRLINE_CODES[lead.aerolinea] || extractAirlineCode(lead.aerolinea);
+    lead.tipoIncidencia = 'retraso'; lead.horasRetraso = 4;
+    if (lead.incidencia.indexOf('cancel') >= 0)           { lead.tipoIncidencia = 'cancelacion'; lead.horasRetraso = 99; }
+    else if (lead.incidencia.indexOf('overbooking') >= 0) { lead.tipoIncidencia = 'overbooking'; lead.horasRetraso = 99; }
+    else if (lead.incidencia.indexOf('conexi') >= 0)      { lead.tipoIncidencia = 'conexion_perdida'; }
+    else if (lead.incidencia.indexOf('>3') >= 0 || lead.incidencia.indexOf('3h') >= 0) { lead.horasRetraso = 4; }
+    else if (lead.incidencia.indexOf('>5') >= 0 || lead.incidencia.indexOf('5h') >= 0) { lead.horasRetraso = 6; }
 
-    // Leer contador de reintentos previos desde col K (puede contener 'RETRY_2' etc.)
-    var scoredCell    = currentScored;
-    var retryCount    = 0;
-    var retryMatch    = scoredCell.match(/RETRY_(\d+)/);
-    if (retryMatch) retryCount = parseInt(retryMatch[1]);
+    var retryMatch = currentScored.match(/RETRY_(\d+)/);
+    var retryCount = retryMatch ? parseInt(retryMatch[1]) : 0;
 
-    // Dead-letter: si ya intentó SCORING_CONFIG.MAX_RETRIES veces → PENDING_MANUAL
     if (retryCount >= SCORING_CONFIG.MAX_RETRIES) {
-      leadsSheet.getRange(actualRow, CONFIG.COL.ESTADO).setValue('PENDING_MANUAL');
-      leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).setValue('PENDING_MANUAL');
-      Logger.log('[scorePendingLeads] Dead-letter: ' + lead.email +
-                 ' tras ' + retryCount + ' reintentos → PENDING_MANUAL');
-      MailApp.sendEmail(CONFIG.ADMIN_EMAIL,
+      leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.ESTADO).setValue('PENDING_MANUAL');
+      leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.SCORED).setValue('PENDING_MANUAL');
+      Logger.log('[scorePendingLeads] Dead-letter: ' + lead.email + ' tras ' + retryCount + ' reintentos → PENDING_MANUAL');
+      MailApp.sendEmail(LEGAL_CONFIG.ADMIN_EMAIL,
         '⚠️ Lead requiere revisión manual — AeroReclaim',
         'Lead ' + lead.email + ' (vuelo ' + lead.vuelo + ') no pudo ser scored tras ' +
         retryCount + ' intentos.\nFila: ' + actualRow + '\nActuar en el Sheet manualmente.');
@@ -1015,59 +816,31 @@ function scorePendingLeads() {
     }
 
     try {
-      // Scoring con retry en AeroDataBox
-      var savedVerificar = verificarVuelo;
-      var result = scoreCase(lead); // usa verificarVuelo internamente
-
-      // Éxito: escribir resultados
+      var result = scoreCase(lead);
       writeScoredLead(ss, lead, result);
-
-      if (result.decision === 'ACCEPTED') {
-        writeOnboardingQueue(ss, lead, result);
-        sendAcceptanceNotification(lead, result);
-      } else if (result.decision === 'REVIEW') {
-        writeReviewQueue(ss, lead, result);
-        sendReviewNotification(lead, result);
-      } else {
-        sendRejectionEmail(lead, result);
-      }
-
-      leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).setValue('SCORED');
-      leadsSheet.getRange(actualRow, CONFIG.COL.ESTADO).setValue(result.decision);
-
+      if (result.decision === 'ACCEPTED') { writeOnboardingQueue(ss, lead, result); sendAcceptanceNotification(lead, result); }
+      else if (result.decision === 'REVIEW') { writeReviewQueue(ss, lead, result); sendReviewNotification(lead, result); }
+      else { sendRejectionEmail(lead, result); }
+      leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.SCORED).setValue('SCORED');
+      leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.ESTADO).setValue(result.decision);
       processed++;
-      Logger.log('[scorePendingLeads] ✅ ' + lead.email + ' → ' +
-                 result.decision + ' (' + (result.scoreTotal || 0) + '/100)');
-
+      Logger.log('[scorePendingLeads] ✅ ' + lead.email + ' → ' + result.decision + ' (' + (result.scoreTotal || 0) + '/100)');
     } catch (err) {
-      errors++;
-      retryCount++;
-      var newRetryLabel = 'RETRY_' + retryCount;
-
-      leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).setValue(newRetryLabel);
-      leadsSheet.getRange(actualRow, CONFIG.COL.ESTADO).setValue('ERROR');
-
-      Logger.log('[scorePendingLeads] ❌ ' + lead.email + ' falló (intento ' +
-                 retryCount + '): ' + err.toString());
-
-      // Delay antes del siguiente lead para no saturar GAS/API
+      errors++; retryCount++;
+      leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.SCORED).setValue('RETRY_' + retryCount);
+      leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.ESTADO).setValue('ERROR');
+      Logger.log('[scorePendingLeads] ❌ ' + lead.email + ' falló (intento ' + retryCount + '): ' + err.toString());
       Utilities.sleep(SCORING_CONFIG.RETRY_DELAY_MS);
     }
-
-    // Delay mínimo entre leads para no agotar cuota AeroDataBox (600 units/mes)
     Utilities.sleep(500);
   }
 
   var elapsed = Math.round((Date.now() - startTime) / 1000);
-  Logger.log('[scorePendingLeads] Batch completado: ' + processed + ' procesados, ' +
-             errors + ' errores, ' + elapsed + 's de ejecución.');
-
-  // Alerta si hay muchos errores
+  Logger.log('[scorePendingLeads] Batch completado: ' + processed + ' procesados, ' + errors + ' errores, ' + elapsed + 's.');
   if (errors > 2) {
-    MailApp.sendEmail(CONFIG.ADMIN_EMAIL,
+    MailApp.sendEmail(LEGAL_CONFIG.ADMIN_EMAIL,
       '⚠️ AeroReclaim: ' + errors + ' errores en scorePendingLeads',
       'El batch de scoring tuvo ' + errors + ' errores en ' + elapsed + 's.\n' +
-      'Revisar Leads Sheet → filas con RETRY_N en col K.\n' +
-      'Si el error es recurrente, puede ser: AeroDataBox quota, GAS infra, o bug de código.');
+      'Revisar Leads Sheet → filas con RETRY_N en col K.');
   }
 }
