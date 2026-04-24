@@ -400,15 +400,21 @@ function processDeadlines() {
         extrajudicialSheet.getRange(i + 1, cols.statusUpdated + 1).setValue(today);
         extrajudicialSheet.getRange(i + 1, cols.escDate + 1).setValue(today);
         
-        notifyPassengerEscalation_(row, cols);
+        // FIX AER-BUG2: NO notificar al pasajero aquí.
+        // La notificación se delega a AESAAgent (Agent 5) DESPUÉS de que
+        // validateAESAEligibility_() confirme que el caso es elegible.
+        // Si Agent 5 lo marca NOT_ELIGIBLE, el pasajero NO recibe notificación
+        // y se genera solo una alerta interna.
+        // notifyPassengerEscalation_(row, cols);  ← ELIMINADO
         
         sendInternalAlert_(caseId, 
           'AUTO-ESCALADA a AESA: ' + row[cols.airlineName] + ' no respondió en 30 días.\n' +
           'Vuelo: ' + row[cols.flightNumber] + ' | Pasajero: ' + row[cols.passengerName] + '\n' +
           'Importe: ' + row[cols.compensationEur] + '€\n' +
-          'ACCIÓN: Presentar reclamación ante AESA (seguridadaerea.gob.es)');
+          'PENDIENTE: AESAAgent validará elegibilidad y notificará al pasajero si procede.\n' +
+          'ACCIÓN (si elegible): Presentar reclamación ante AESA (seguridadaerea.gob.es)');
         
-        logAction_(ss, caseId, 'AUTO_ESCALATED', 'D+' + daysSinceSent + ': escalada automática a AESA');
+        logAction_(ss, caseId, 'AUTO_ESCALATED', 'D+' + daysSinceSent + ': escalada automática a AESA — notificación al pasajero pendiente de validación AESAAgent');
       }
       // ─── D+25: ULTIMÁTUM ─────────────────────────────────────
       else if (daysSinceSent >= EX_CONFIG.DEADLINES.ULTIMATUM_DAYS && 

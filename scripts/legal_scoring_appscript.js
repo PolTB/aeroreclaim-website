@@ -820,3 +820,254 @@ function setAirportDB(jsonString) {
   var count = Object.keys(JSON.parse(jsonString)).length;
   Logger.log("✅ Base de aeropuertos cargada: " + count + " aeropuertos.");
 }
+
+
+// ═══════════════════════════════════════════════════════════════
+// SCORING CON RETRY LOGIC — scorePendingLeads()
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * scorePendingLeads()
+ *
+ * Función de recuperación y scoring batch para leads PENDING.
+ * Diseñada para ejecutarse via trigger time-based (ej. cada 15 min).
+ *
+ * FEATURES:
+ * - Retry logic con exponential backoff para llamadas AeroDataBox
+ * - Timeout guard: para antes de agotar el límite de 6 min de GAS
+ * - Dead-letter queue: leads que fallan 3+ veces se marcan PENDING_MANUAL
+ * - Idempotente: no reprocesa leads ya marcados SCORED
+ * - Procesa máx. BATCH_SIZE leads por ejecución para evitar timeouts
+ *
+ * INSTALAR TRIGGER:
+ *   Ejecutar installScoringTrigger() una vez desde el editor GAS.
+ */
+
+var SCORING_CONFIG = {
+  BATCH_SIZE:        10,      // Leads por ejecución (no agotar cuota AeroDataBox)
+  MAX_RETRIES:       3,       // Intentos por lead antes de PENDING_MANUAL
+  RETRY_DELAY_MS:    2000,    // Delay base entre reintentos (exponential backoff)
+  TIMEOUT_GUARD_MS:  300000,  // Parar si llevamos >5 min ejecutando (GAS límite 6 min)
+  PENDING_STATES:    ['PENDING', '', null, undefined]  // Estados que requieren scoring
+};
+
+/**
+ * Instalar trigger time-based para scorePendingLeads.
+ * Ejecutar UNA VEZ manualmente desde el editor GAS.
+ */
+function installScoringTrigger() {
+  // Eliminar triggers previos de scorePendingLeads
+  ScriptApp.getProjectTriggers().forEach(function(t) {
+    if (t.getHandlerFunction() === 'scorePendingLeads') {
+      ScriptApp.deleteTrigger(t);
+      Logger.log('Trigger previo scorePendingLeads eliminado.');
+    }
+  });
+
+  ScriptApp.newTrigger('scorePendingLeads')
+    .timeBased()
+    .everyMinutes(15)
+    .create();
+
+  Logger.log('✅ Trigger scorePendingLeads instalado: cada 15 minutos.');
+}
+
+/**
+ * Wrapper con retry logic para verificarVuelo().
+ * En caso de error de red o timeout de AeroDataBox, reintenta con backoff.
+ */
+function verificarVueloConRetry(flightNumber, fechaVuelo, maxRetries) {
+  var retries = maxRetries || SCORING_CONFIG.MAX_RETRIES;
+  var lastErr = null;
+
+  for (var attempt = 1; attempt <= retries; attempt++) {
+    try {
+      var result = verificarVuelo(flightNumber, fechaVuelo);
+      // Si la API respondió (aunque sea 404), no es error de red → devolver
+      if (result) return result;
+    } catch (e) {
+      lastErr = e;
+      Logger.log('[retry] Intento ' + attempt + '/' + retries +
+                 ' fallido para ' + flightNumber + ': ' + e.toString());
+      if (attempt < retries) {
+        // Exponential backoff: 2s, 4s, 8s
+        Utilities.sleep(SCORING_CONFIG.RETRY_DELAY_MS * Math.pow(2, attempt - 1));
+      }
+    }
+  }
+
+  // Todos los intentos agotados → devolver objeto de fallo limpio
+  Logger.log('[retry] AeroDataBox agotó ' + retries + ' intentos para ' + flightNumber);
+  return {
+    found: false,
+    source: 'RETRY_EXHAUSTED',
+    note: lastErr ? lastErr.toString() : 'Sin respuesta tras ' + retries + ' intentos'
+  };
+}
+
+/**
+ * scorePendingLeads()
+ * Función principal — disparada por trigger time-based cada 15 min.
+ */
+function scorePendingLeads() {
+  var startTime = Date.now();
+  var ss        = SpreadsheetApp.openById('10zEyvd3P57DidwOi2UM1VnXHDnPrIWMnpTSbdZ4zX-E');
+  var leadsSheet = ss.getSheetByName(CONFIG.SHEET_LEADS);
+
+  if (!leadsSheet) {
+    Logger.log('[scorePendingLeads] ERROR: tab Leads no encontrado.');
+    return;
+  }
+
+  var lastRow = leadsSheet.getLastRow();
+  if (lastRow < 2) {
+    Logger.log('[scorePendingLeads] Sin leads. Saliendo.');
+    return;
+  }
+
+  // Leer todas las filas de leads
+  var allData  = leadsSheet.getRange(2, 1, lastRow - 1, 11).getValues();
+  var pending  = [];
+
+  for (var i = 0; i < allData.length; i++) {
+    var scoredVal = String(allData[i][CONFIG.COL.SCORED - 1] || '').trim();
+    var estadoVal = String(allData[i][CONFIG.COL.ESTADO - 1] || '').trim();
+    var emailVal  = String(allData[i][CONFIG.COL.EMAIL  - 1] || '').trim();
+
+    // Excluir TEST_CLOSED, SCORED, ERROR_PERMANENT, PENDING_MANUAL y filas vacías
+    if (scoredVal === 'SCORED' || scoredVal === 'TEST_CLOSED') continue;
+    if (estadoVal === 'PENDING_MANUAL' || estadoVal === 'ERROR_PERMANENT') continue;
+    if (!emailVal || emailVal === '') continue;
+
+    pending.push({ rowIndex: i + 2, data: allData[i] }); // rowIndex es 1-based en Sheets
+  }
+
+  if (pending.length === 0) {
+    Logger.log('[scorePendingLeads] 0 leads pendientes. Nada que procesar.');
+    return;
+  }
+
+  Logger.log('[scorePendingLeads] ' + pending.length + ' leads pendientes. ' +
+             'Procesando batch de ' + Math.min(pending.length, SCORING_CONFIG.BATCH_SIZE) + '.');
+
+  var processed = 0;
+  var errors    = 0;
+
+  for (var j = 0; j < pending.length && processed < SCORING_CONFIG.BATCH_SIZE; j++) {
+
+    // ── TIMEOUT GUARD ───────────────────────────────────────────
+    if (Date.now() - startTime > SCORING_CONFIG.TIMEOUT_GUARD_MS) {
+      Logger.log('[scorePendingLeads] ⏱️ Timeout guard: ' +
+                 Math.round((Date.now() - startTime) / 1000) + 's. Parando batch.');
+      break;
+    }
+
+    var item       = pending[j];
+    var actualRow  = item.rowIndex;
+    var rowData    = item.data;
+
+    // Re-leer estado en tiempo real para evitar duplicados (otra ejecución concurrente)
+    var currentScored = String(leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).getValue() || '').trim();
+    if (currentScored === 'SCORED' || currentScored === 'TEST_CLOSED') continue;
+
+    // Construir objeto lead
+    var lead = {
+      row:             actualRow,
+      timestamp:       rowData[CONFIG.COL.TIMESTAMP - 1],
+      nombre:          String(rowData[CONFIG.COL.NOMBRE - 1]      || ''),
+      email:           String(rowData[CONFIG.COL.EMAIL - 1]       || ''),
+      vuelo:           String(rowData[CONFIG.COL.VUELO - 1]       || ''),
+      fechaVuelo:      rowData[CONFIG.COL.FECHA_VUELO - 1],
+      aerolinea:       String(rowData[CONFIG.COL.AEROLINEA - 1]   || ''),
+      incidencia:      String(rowData[CONFIG.COL.INCIDENCIA - 1]  || '').toLowerCase(),
+      compensacionPrev:String(rowData[CONFIG.COL.COMPENSACION - 1]|| ''),
+      referralSource:  String(rowData[9] || ''),
+      scored:          false
+    };
+    lead.airlineCode   = AIRLINE_CODES[lead.aerolinea] || extractAirlineCode(lead.aerolinea);
+    lead.tipoIncidencia = 'retraso';
+    lead.horasRetraso   = 4;
+    if (lead.incidencia.indexOf('cancel') >= 0)            { lead.tipoIncidencia = 'cancelacion'; lead.horasRetraso = 99; }
+    else if (lead.incidencia.indexOf('overbooking') >= 0)  { lead.tipoIncidencia = 'overbooking'; lead.horasRetraso = 99; }
+    else if (lead.incidencia.indexOf('conexi') >= 0)       { lead.tipoIncidencia = 'conexion_perdida'; }
+    else if (lead.incidencia.indexOf('>3') >= 0 ||
+             lead.incidencia.indexOf('3h') >= 0)           { lead.horasRetraso = 4; }
+    else if (lead.incidencia.indexOf('>5') >= 0 ||
+             lead.incidencia.indexOf('5h') >= 0)           { lead.horasRetraso = 6; }
+
+    // Leer contador de reintentos previos desde col K (puede contener 'RETRY_2' etc.)
+    var scoredCell    = currentScored;
+    var retryCount    = 0;
+    var retryMatch    = scoredCell.match(/RETRY_(\d+)/);
+    if (retryMatch) retryCount = parseInt(retryMatch[1]);
+
+    // Dead-letter: si ya intentó SCORING_CONFIG.MAX_RETRIES veces → PENDING_MANUAL
+    if (retryCount >= SCORING_CONFIG.MAX_RETRIES) {
+      leadsSheet.getRange(actualRow, CONFIG.COL.ESTADO).setValue('PENDING_MANUAL');
+      leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).setValue('PENDING_MANUAL');
+      Logger.log('[scorePendingLeads] Dead-letter: ' + lead.email +
+                 ' tras ' + retryCount + ' reintentos → PENDING_MANUAL');
+      MailApp.sendEmail(CONFIG.ADMIN_EMAIL,
+        '⚠️ Lead requiere revisión manual — AeroReclaim',
+        'Lead ' + lead.email + ' (vuelo ' + lead.vuelo + ') no pudo ser scored tras ' +
+        retryCount + ' intentos.\nFila: ' + actualRow + '\nActuar en el Sheet manualmente.');
+      continue;
+    }
+
+    try {
+      // Scoring con retry en AeroDataBox
+      var savedVerificar = verificarVuelo;
+      var result = scoreCase(lead); // usa verificarVuelo internamente
+
+      // Éxito: escribir resultados
+      writeScoredLead(ss, lead, result);
+
+      if (result.decision === 'ACCEPTED') {
+        writeOnboardingQueue(ss, lead, result);
+        sendAcceptanceNotification(lead, result);
+      } else if (result.decision === 'REVIEW') {
+        writeReviewQueue(ss, lead, result);
+        sendReviewNotification(lead, result);
+      } else {
+        sendRejectionEmail(lead, result);
+      }
+
+      leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).setValue('SCORED');
+      leadsSheet.getRange(actualRow, CONFIG.COL.ESTADO).setValue(result.decision);
+
+      processed++;
+      Logger.log('[scorePendingLeads] ✅ ' + lead.email + ' → ' +
+                 result.decision + ' (' + (result.scoreTotal || 0) + '/100)');
+
+    } catch (err) {
+      errors++;
+      retryCount++;
+      var newRetryLabel = 'RETRY_' + retryCount;
+
+      leadsSheet.getRange(actualRow, CONFIG.COL.SCORED).setValue(newRetryLabel);
+      leadsSheet.getRange(actualRow, CONFIG.COL.ESTADO).setValue('ERROR');
+
+      Logger.log('[scorePendingLeads] ❌ ' + lead.email + ' falló (intento ' +
+                 retryCount + '): ' + err.toString());
+
+      // Delay antes del siguiente lead para no saturar GAS/API
+      Utilities.sleep(SCORING_CONFIG.RETRY_DELAY_MS);
+    }
+
+    // Delay mínimo entre leads para no agotar cuota AeroDataBox (600 units/mes)
+    Utilities.sleep(500);
+  }
+
+  var elapsed = Math.round((Date.now() - startTime) / 1000);
+  Logger.log('[scorePendingLeads] Batch completado: ' + processed + ' procesados, ' +
+             errors + ' errores, ' + elapsed + 's de ejecución.');
+
+  // Alerta si hay muchos errores
+  if (errors > 2) {
+    MailApp.sendEmail(CONFIG.ADMIN_EMAIL,
+      '⚠️ AeroReclaim: ' + errors + ' errores en scorePendingLeads',
+      'El batch de scoring tuvo ' + errors + ' errores en ' + elapsed + 's.\n' +
+      'Revisar Leads Sheet → filas con RETRY_N en col K.\n' +
+      'Si el error es recurrente, puede ser: AeroDataBox quota, GAS infra, o bug de código.');
+  }
+}

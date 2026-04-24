@@ -77,7 +77,13 @@ var AESA_CONFIG = {
   },
 
   // Tipos de incidencia elegibles para RAL
+  // FIX AER-BUG1: incluir todas las variantes de retraso que llegan del pipeline
+  // (RETRASO, RETRASO >3H, RETRASO_3H, RETRASO_4H, etc.) — el check real
+  // se hace con prefijo para ser robusto frente a descripciones del Sheet.
   ELIGIBLE_INCIDENT_TYPES: ['RETRASO', 'CANCELACION', 'OVERBOOKING', 'DOWNGRADE', 'PMR'],
+
+  // Prefijos que se consideran elegibles (captura variantes como RETRASO >3H, RETRASO_4H)
+  ELIGIBLE_INCIDENT_PREFIXES: ['RETRASO', 'CANCELACION', 'OVERBOOKING', 'DOWNGRADE', 'PMR'],
 
   // Aerolíneas de la UE (para check de jurisdicción llegadas)
   EU_CARRIERS: ['VY','IB','I2','UX','V7','TO','AF','LH','AZ','EW','SK','KL',
@@ -166,9 +172,12 @@ function processNewAESACases() {
         newStatus  = AESA_CONFIG.STATUS.NOT_ELIGIBLE;
         aesaRecord = buildAESARecord_(caseData, eligibility, null, newStatus);
         aesaSheet.appendRow(aesaRecord);
+        // FIX AER-BUG2: caso NO elegible → solo alerta interna, SIN notificar al pasajero.
         sendInternalAlertAESA_(ss, caseId,
-          'NO ELEGIBLE para RAL AESA.\nMotivo: ' + eligibility.notes +
-          '\nPasajero: ' + caseData.passenger_name + ' | Vuelo: ' + caseData.flight_number);
+          '⛔ NO ELEGIBLE para RAL AESA — NOTIFICACIÓN AL PASAJERO BLOQUEADA.\n' +
+          'Motivo: ' + eligibility.notes + '\n' +
+          'Pasajero: ' + caseData.passenger_name + ' | Vuelo: ' + caseData.flight_number + '\n' +
+          'ACCIÓN: Revisar manualmente el caso. El pasajero NO ha sido notificado.');
         logActionAESA_(ss, caseId, 'ELIGIBILITY_FAIL', eligibility.notes);
 
       } else {
@@ -180,6 +189,10 @@ function processNewAESACases() {
 
         // Enviar alerta interna rica con el dossier completo
         sendDossierAlert_(caseData, eligibility, dossier);
+
+        // FIX AER-BUG2: notificar al pasajero AQUÍ, DESPUÉS de confirmar elegibilidad.
+        // El agente 4 (ExtrajudicialAgent) ya NO envía esta notificación.
+        notifyPassengerAESAEscalation_(caseData);
 
         logActionAESA_(ss, caseId, 'DOSSIER_READY',
           'Dossier listo. Docs faltantes: ' + (dossier.missingDocs.join(', ') || 'ninguno'));
@@ -633,8 +646,25 @@ function validateAESAEligibility_(caseData) {
   }
 
   // CHECK 5 — Tipo de incidencia elegible
-  var incidentType = String(caseData.incident_type || '').toUpperCase().trim();
-  if (AESA_CONFIG.ELIGIBLE_INCIDENT_TYPES.indexOf(incidentType) >= 0) {
+  // FIX AER-BUG1: normalizar el tipo de incidencia antes de comparar.
+  // El Sheet puede almacenar 'RETRASO >3H', 'RETRASO_3H', 'RETRASO 4H', etc.
+  // Usamos coincidencia por prefijo para capturar todas las variantes válidas
+  // de retraso, cancelación, overbooking, downgrade y PMR.
+  var incidentType = String(caseData.incident_type || '').toUpperCase().trim()
+                       .replace(/[_\-]/g, ' ');  // normalizar separadores
+
+  var prefixes = AESA_CONFIG.ELIGIBLE_INCIDENT_PREFIXES;
+  var incidentEligible = false;
+  var matchedPrefix = '';
+  for (var pi = 0; pi < prefixes.length; pi++) {
+    if (incidentType === prefixes[pi] || incidentType.indexOf(prefixes[pi]) === 0) {
+      incidentEligible = true;
+      matchedPrefix = prefixes[pi];
+      break;
+    }
+  }
+
+  if (incidentEligible) {
     checks.push('✓ Tipo incidencia RAL (' + incidentType + ')');
   } else {
     checks.push('✗ Tipo incidencia no elegible (' + incidentType + ' — equipaje/calidad excluidos)');
@@ -1536,6 +1566,58 @@ function installAESATriggers() {
 // ═══════════════════════════════════════════════════════════════
 
 /**
+ * notifyPassengerAESAEscalation_(caseData)
+ *
+ * FIX AER-BUG2: notifica al pasajero que su caso se ha escalado a AESA.
+ * Esta función se llama SOLO desde AESAAgent, DESPUÉS de que
+ * validateAESAEligibility_() haya confirmado que el caso ES elegible.
+ *
+ * El ExtrajudicialAgent (Agent 4) ya NO hace esta notificación para
+ * evitar la race condition en la que el cliente recibía el email
+ * antes de que Agent 5 validase elegibilidad.
+ *
+ * Sender: siempre info@aeroreclaim.com (obligatorio por norma interna).
+ */
+function notifyPassengerAESAEscalation_(caseData) {
+  var to   = caseData.passenger_email;
+  var name = caseData.passenger_name;
+  var id   = caseData.case_id;
+  var fn   = caseData.flight_number;
+  var fd   = caseData.flight_date;
+
+  if (!to || !to.includes('@')) {
+    Logger.log('[AESAAgent] notifyPassengerAESAEscalation_: email inválido para ' + id + ' — notificación omitida');
+    return;
+  }
+
+  var subject = 'Tu reclamación avanza: caso escalado a AESA — Exp. ' + id;
+
+  var body =
+    'Hola ' + name + ',\n\n' +
+    'La aerolínea no ha respondido favorablemente en el plazo de 30 días.\n\n' +
+    'Hemos verificado que tu caso cumple todos los requisitos y lo hemos escalado ' +
+    'ante la AGENCIA ESTATAL DE SEGURIDAD AÉREA (AESA).\n\n' +
+    '¿Qué significa esto?\n' +
+    'AESA tiene poder de resolución VINCULANTE para las aerolíneas (Reglamento CE 261/2004, ' +
+    'Art. 16, vigente para vuelos desde el 02/06/2023). La aerolínea está obligada a cumplir ' +
+    'su resolución.\n\n' +
+    'Vuelo: ' + fn + ' (' + fd + ')\n' +
+    'Expediente: ' + id + '\n\n' +
+    'Plazo estimado de resolución: 90-180 días.\n\n' +
+    'No necesitas hacer nada. Te informaremos de cada novedad.\n\n' +
+    'Atentamente,\nAeroReclaim Solutions\ninfo@aeroreclaim.com';
+
+  GmailApp.sendEmail(to, subject, body, {
+    from:    'info@aeroreclaim.com',
+    name:    'AeroReclaim Solutions',
+    replyTo: 'info@aeroreclaim.com'
+  });
+
+  Logger.log('[AESAAgent] Pasajero notificado de escalada a AESA: ' + to + ' (caso ' + id + ')');
+}
+
+
+/**
  * Test: Verificar que las pestañas existen y son accesibles
  */
 function testAESAConfig() {
@@ -1598,6 +1680,42 @@ function testAESAEligibility() {
         delay_hours: 4,
         distance_km: 620,
         compensation_eur: 250,
+        extrajudicial_claim_date: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000)
+      }
+    },
+    {
+      // FIX AER-BUG1: Este era el caso que fallaba — AR-20260317-MANUAL-001
+      // Air Europa UX52 HAV→MAD con incident_type='RETRASO >3H' era marcado NO ELEGIBLE
+      label: 'CASO OK (BUG1 FIX) — Air Europa HAV→MAD, RETRASO >3H (variante con símbolo)',
+      expectedEligible: true,
+      data: {
+        case_id: 'AR-20260317-MANUAL-001',
+        flight_date: '17/03/2026',
+        origin_iata: 'HAV',
+        destination_iata: 'MAD',
+        airline_iata: 'UX',
+        airline_name: 'Air Europa',
+        incident_type: 'RETRASO >3H',   // ← la variante que fallaba
+        delay_hours: 4.5,
+        distance_km: 8945,
+        compensation_eur: 600,
+        extrajudicial_claim_date: new Date(Date.now() - 38 * 24 * 60 * 60 * 1000)
+      }
+    },
+    {
+      label: 'CASO OK (BUG1 FIX) — variante RETRASO_4H (separador guión bajo)',
+      expectedEligible: true,
+      data: {
+        case_id: 'AR-TEST-BUG1B',
+        flight_date: '10/01/2025',
+        origin_iata: 'MAD',
+        destination_iata: 'LHR',
+        airline_iata: 'IB',
+        airline_name: 'Iberia',
+        incident_type: 'RETRASO_4H',    // ← variante guión bajo
+        delay_hours: 4,
+        distance_km: 1264,
+        compensation_eur: 400,
         extrajudicial_claim_date: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000)
       }
     },
