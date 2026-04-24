@@ -540,16 +540,6 @@
       var flightInput = form.querySelector('input[type="text"]');
       var dateInput = form.querySelector('input[type="date"]');
 
-      // Funnel: form_submit — fire on every submit attempt (before validation)
-      if (typeof gtag === 'function') {
-        gtag('event', 'form_submit', {
-          event_category: 'funnel',
-          form_id: formId,
-          flight_number: flightInput ? flightInput.value.trim().toUpperCase() : undefined,
-          flight_date: dateInput ? dateInput.value : undefined
-        });
-      }
-
       var valid = true;
 
       // Flight number validation
@@ -590,6 +580,16 @@
 
       var flightNumber = flightInput.value.trim().toUpperCase();
       var dateStr = dateInput.value;
+
+      // Funnel: form_submit — solo si validación pasa (vuelo y fecha correctos)
+      if (typeof gtag === 'function') {
+        gtag('event', 'form_submit', {
+          event_category: 'funnel',
+          form_id: formId,
+          flight_number: flightNumber,
+          flight_date: dateStr
+        });
+      }
 
       // GA4 event
       if (typeof gtag === 'function') {
