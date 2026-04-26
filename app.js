@@ -469,8 +469,21 @@
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formBody
+        }).then(function() {
+          if (typeof gtag === 'function') {
+            gtag('event', 'lead_capturado', {
+              event_category: 'formulario',
+              event_label: 'mandato_completado',
+              flight_number: flightNumber,
+              airline: result.airline ? result.airline.code : '',
+              compensation_est: comp.estimated,
+              issue_type: issue.value,
+              value: comp.estimated * 0.25,
+              currency: 'EUR'
+            });
+          }
         });
-      } catch(err) { /* silent — lead tracked via GA4 */ }
+      } catch(err) { /* silent */ }
 
       // Update referral_source via GET to v8 deployment (avoids duplicate rows)
       if (refParam) {
@@ -479,18 +492,6 @@
           refUrl += '?action=update_referral&email=' + encodeURIComponent(leadData.email) + '&referral=' + encodeURIComponent(refParam);
           fetch(refUrl, { mode: 'no-cors' });
         } catch(e) { /* silent */ }
-      }
-
-      // GA4 event — lead_capturado es la conversión principal vinculada a Google Ads
-      if (typeof gtag === 'function') {
-        gtag('event', 'lead_capturado', {
-          flight_number: flightNumber,
-          airline: result.airline ? result.airline.code : '',
-          compensation_est: comp.estimated,
-          issue_type: issue.value,
-          value: comp.estimated * 0.25,
-          currency: 'EUR'
-        });
       }
 
       // Show success
@@ -580,16 +581,6 @@
 
       var flightNumber = flightInput.value.trim().toUpperCase();
       var dateStr = dateInput.value;
-
-      // Funnel: form_submit — solo si validación pasa (vuelo y fecha correctos)
-      if (typeof gtag === 'function') {
-        gtag('event', 'form_submit', {
-          event_category: 'funnel',
-          form_id: formId,
-          flight_number: flightNumber,
-          flight_date: dateStr
-        });
-      }
 
       // GA4 event
       if (typeof gtag === 'function') {
