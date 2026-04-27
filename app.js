@@ -202,6 +202,10 @@
           compensation_est: result.compensation ? result.compensation.estimated : 0,
           confidence: result.confidence || ''
         });
+        gtag('event', 'qualify_lead', {
+          flight_number: flightNumber,
+          compensation_est: result.compensation ? result.compensation.estimated : 0
+        });
       }
     }
 
@@ -478,6 +482,10 @@
               airline: result.airline ? result.airline.code : '',
               compensation_est: comp.estimated,
               issue_type: issue.value,
+              value: comp.estimated * 0.25,
+              currency: 'EUR'
+            });
+            gtag('event', 'close_convert_lead', {
               value: comp.estimated * 0.25,
               currency: 'EUR'
             });
