@@ -485,9 +485,15 @@ function scoreCase(lead) {
     motivo = "Caso prescrito: han pasado más de 5 años desde el vuelo (límite legal en España).";
     scoreTotal = Math.min(scoreTotal, 20);
   } else if (flightData.found === true && !flightData.cancelled && flightData.delayHours < 3 && lead.tipoIncidencia === "retraso") {
-    decision = "REJECTED";
-    motivo = "Retraso verificado de " + flightData.delayHours.toFixed(1) + "h — inferior a las 3h requeridas por CE 261/2004.";
-    scoreTotal = Math.min(scoreTotal, 30);
+    if (lead.horasRetraso >= 3) {
+      // AeroDataBox delay=0 o bajo pero pasajero declaró ≥3h — REVISIÓN_MANUAL (CLAUDE.md regla #1)
+      decision = "REVIEW";
+      motivo = "AeroDataBox registra " + flightData.delayHours.toFixed(1) + "h pero el pasajero declaró retraso ≥3h — verificación manual requerida.";
+    } else {
+      decision = "REJECTED";
+      motivo = "Retraso verificado de " + flightData.delayHours.toFixed(1) + "h — inferior a las 3h requeridas por CE 261/2004.";
+      scoreTotal = Math.min(scoreTotal, 30);
+    }
   } else if (scoreTotal >= LEGAL_CONFIG.SCORE_ACCEPT) {
     decision = "ACCEPTED";
     motivo = "Caso aceptado automáticamente. Score " + scoreTotal + "/100.";
