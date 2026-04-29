@@ -1,7 +1,7 @@
 /**
  * ═══════════════════════════════════════════════════════════════
  * AERORECLAIM — AGENTE 2: LEGAL SCORING ENGINE
- * Versión 1.0 | Marzo 2026
+ * Versión 1.1 | Abril 2026
  * 
  * Evalúa automáticamente cada lead del Pre-Validador y decide:
  *   Score ≥ 70  → ACCEPTED  → Onboarding_Queue
@@ -99,6 +99,26 @@ const EU_EEA_CODES = ["ES","FR","DE","IT","PT","NL","BE","AT","SE","DK","FI","PL
                       "CZ","HU","RO","GR","BG","HR","SK","SI","EE","LV","LT","CY",
                       "MT","LU","IE","NO","IS","LI"];
 
+// IATA codes de aerolíneas EU/EEA (para override CE 261)
+const EU_AIRLINE_CODES = ["IB","VY","FR","UX","I2","U2","LH","AF","KL","BA","TP","LX","OS",
+                          "SN","LO","DY","W6","V7","LS","HV","EW","SK","AY","EI","AZ","TP"];
+
+
+// ═══════════════════════════════════════════════════════════════
+// HELPER: Resolver código IATA con fallback al prefijo del vuelo
+// ═══════════════════════════════════════════════════════════════
+// Ej: aerolinea="" + vuelo="VY1003" → "VY"
+//     aerolinea="Vueling" → "VY"
+function resolveAirlineCode(airlineName, flightNumber) {
+  var code = AIRLINE_CODES[airlineName] || extractAirlineCode(airlineName);
+  if (code !== "DEFAULT") return code;
+  // Fallback: prefijo del número de vuelo (2 letras/dígitos seguidos de número)
+  var fn = String(flightNumber || "").trim().toUpperCase();
+  var m = fn.match(/^([A-Z0-9]{2})\s?\d/);
+  if (m && AIRLINE_PROFILES[m[1]]) return m[1];
+  return "DEFAULT";
+}
+
 
 // ═══════════════════════════════════════════════════════════════
 // INSTALAR TRIGGER — Ejecutar UNA SOLA VEZ manualmente
@@ -186,12 +206,10 @@ function onLeadInserted(e) {
 function readLead(sheet, row) {
   var values = sheet.getRange(row, 1, 1, 11).getValues()[0];
   
-  // Extraer código IATA de aerolínea
-  var airlineName = String(values[LEGAL_CONFIG.COL.AEROLINEA - 1] || "");
-  var airlineCode = AIRLINE_CODES[airlineName] || extractAirlineCode(airlineName);
-  
-  // Extraer origen/destino del número de vuelo si es posible
-  var flightNumber = String(values[LEGAL_CONFIG.COL.VUELO - 1] || "");
+  var airlineName  = String(values[LEGAL_CONFIG.COL.AEROLINEA - 1] || "");
+  var flightNumber = String(values[LEGAL_CONFIG.COL.VUELO     - 1] || "");
+  // FIX AER-109: si Aerolínea está vacía, extraer IATA del prefijo del vuelo
+  var airlineCode  = resolveAirlineCode(airlineName, flightNumber);
   
   // Parsear incidencia
   var incidencia = String(values[LEGAL_CONFIG.COL.INCIDENCIA - 1] || "").toLowerCase();
@@ -375,6 +393,11 @@ function verificarVuelo(flightNumber, dateStr) {
 // SCORING ENGINE — 6 factores, score 0-100
 // ═══════════════════════════════════════════════════════════════
 
+function generateCasoId() {
+  return "AR-" + Utilities.formatDate(new Date(), "Europe/Madrid", "yyyyMMdd-HHmmss") +
+         "-" + Math.floor(Math.random() * 1000);
+}
+
 function scoreCase(lead) {
   // Intentar verificar vuelo
   var flightData = verificarVuelo(lead.vuelo, lead.fechaVuelo);
@@ -403,18 +426,27 @@ function scoreCase(lead) {
     intraEU = true;
   }
   
-  // Rechazar si ruta no-UE Y aerolínea no-UE (fuera del ámbito CE 261/2004)
-  var EU_AIRLINE_CODES = ['IB', 'VY', 'FR', 'UX', 'I2'];
+  // FIX AER-109: el override "fuera de ámbito CE 261" SOLO aplica cuando
+  // AeroDataBox SI devolvió datos y confirma ruta no-UE + aerolínea no-UE.
+  // Si AeroDataBox falló → NO rechazar aquí, dejar que pase a scoring → REVIEW.
   var airlineCodeUpper = (lead.airlineCode || '').toUpperCase();
-  if (!intraEU && EU_AIRLINE_CODES.indexOf(airlineCodeUpper) < 0) {
+  if (flightData.found === true && !intraEU &&
+      EU_AIRLINE_CODES.indexOf(airlineCodeUpper) < 0) {
     return {
-      casoId:     lead.casoId,
-      decision:   'RECHAZADO',
-      scoreTotal: 0,
-      motivo:     'Fuera del ámbito CE 261/2004: ruta no-UE y aerolínea no-UE.',
+      casoId:       generateCasoId(),
+      decision:     'REJECTED',
+      scoreTotal:   0,
+      motivo:       'Fuera del ámbito CE 261/2004: ruta no-UE y aerolínea no-UE (' + (airlineCodeUpper || '?') + ').',
       compensacion: 0,
-      distanciaKm: distanciaKm,
-      flightData: flightData
+      distanciaKm:  Math.round(distanciaKm),
+      intraEU:      intraEU,
+      origen:       origen,
+      destino:      destino,
+      flightData:   flightData,
+      vueloVerificado: true,
+      fuenteVerificacion: flightData.source || 'AeroDataBox',
+      categoriaVuelo: 'fuera_ambito',
+      f1: 0, f2: 0, f3: 0, f4: 0, f5: 0, f6: 0
     };
   }
 
@@ -494,6 +526,10 @@ function scoreCase(lead) {
       motivo = "Retraso verificado de " + flightData.delayHours.toFixed(1) + "h — inferior a las 3h requeridas por CE 261/2004.";
       scoreTotal = Math.min(scoreTotal, 30);
     }
+  } else if (flightData.found === false && (lead.compensacionPrev || lead.tipoIncidencia)) {
+    // FIX AER-109: AeroDataBox no encontró el vuelo → no hay info suficiente para rechazar → REVIEW
+    decision = "REVIEW";
+    motivo = "AeroDataBox no devolvió datos del vuelo " + lead.vuelo + " — verificación manual requerida (" + (flightData.note || flightData.source) + ").";
   } else if (scoreTotal >= LEGAL_CONFIG.SCORE_ACCEPT) {
     decision = "ACCEPTED";
     motivo = "Caso aceptado automáticamente. Score " + scoreTotal + "/100.";
@@ -523,7 +559,7 @@ function scoreCase(lead) {
     fuenteVerificacion: flightData.source || "NONE",
     origen: origen,
     destino: destino,
-    casoId: "AR-" + Utilities.formatDate(new Date(), "Europe/Madrid", "yyyyMMdd-HHmmss") + "-" + Math.floor(Math.random() * 1000)
+    casoId: generateCasoId()
   };
 }
 
@@ -657,6 +693,26 @@ function testScoringMock() {
              " F4=" + result.f4 + " F5=" + result.f5 + " F6=" + result.f6);
   Logger.log("Compensación: " + result.compensacion + "€");
   Logger.log("Full: " + JSON.stringify(result, null, 2));
+  return result;
+}
+
+// FIX AER-109: test del caso AR-106 que disparó el bug
+function testAR106VuelingEmptyAirline() {
+  var lead = {
+    row: 0, timestamp: new Date(), nombre: "Test Pol AR-106",
+    email: "ptusquets+test106@gmail.com",
+    vuelo: "VY1003", fechaVuelo: "2026-04-15",
+    aerolinea: "",  // ← columna Aerolínea vacía (caso real)
+    incidencia: "retraso >3h", tipoIncidencia: "retraso", horasRetraso: 4,
+    compensacionPrev: "250€", scored: false
+  };
+  // Resolver código como lo hace readLead()
+  lead.airlineCode = resolveAirlineCode(lead.aerolinea, lead.vuelo);
+  Logger.log("airlineCode resuelto: " + lead.airlineCode + " (esperado VY)");
+  var result = scoreCase(lead);
+  Logger.log("Decisión: " + result.decision + " (NO debe ser REJECTED por no-UE)");
+  Logger.log("Motivo: " + result.motivo);
+  Logger.log("CasoId: " + result.casoId + " (NO debe ser undefined)");
   return result;
 }
 
@@ -799,7 +855,8 @@ function scorePendingLeads() {
       referralSource: String(rowData[9] || ''),
       scored: false
     };
-    lead.airlineCode = AIRLINE_CODES[lead.aerolinea] || extractAirlineCode(lead.aerolinea);
+    // FIX AER-109: usar resolveAirlineCode (incluye fallback al prefijo del vuelo)
+    lead.airlineCode = resolveAirlineCode(lead.aerolinea, lead.vuelo);
     lead.tipoIncidencia = 'retraso'; lead.horasRetraso = 4;
     if (lead.incidencia.indexOf('cancel') >= 0)           { lead.tipoIncidencia = 'cancelacion'; lead.horasRetraso = 99; }
     else if (lead.incidencia.indexOf('overbooking') >= 0) { lead.tipoIncidencia = 'overbooking'; lead.horasRetraso = 99; }
