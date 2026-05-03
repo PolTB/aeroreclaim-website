@@ -631,6 +631,7 @@ function sendWelcomeEmail(caso, mandatoPdf) {
   
   var options = {
     htmlBody: htmlBody,
+    from: OB_CONFIG.FROM_EMAIL,
     name: 'AeroReclaim',
     attachments: [mandatoPdf]
   };
@@ -669,7 +670,7 @@ function sendReminder1(caso) {
   
   GmailApp.sendEmail(caso.email, subject,
     'Recordatorio: responde con tus documentos y ACEPTO para reclamar ' + caso.compensacion + '€.',
-    { htmlBody: htmlBody, name: 'AeroReclaim' });
+    { htmlBody: htmlBody, from: OB_CONFIG.FROM_EMAIL, name: 'AeroReclaim' });
 }
 
 
@@ -702,7 +703,7 @@ function sendReminder2(caso) {
   
   GmailApp.sendEmail(caso.email, subject,
     'Última oportunidad: responde con tus documentos y ACEPTO para reclamar ' + caso.compensacion + '€.',
-    { htmlBody: htmlBody, name: 'AeroReclaim' });
+    { htmlBody: htmlBody, from: OB_CONFIG.FROM_EMAIL, name: 'AeroReclaim' });
 }
 
 
@@ -727,7 +728,7 @@ function sendAbandonEmail(caso) {
   
   GmailApp.sendEmail(caso.email, subject,
     'Tu caso ' + caso.casoId + ' ha sido cerrado por falta de documentación.',
-    { htmlBody: htmlBody, name: 'AeroReclaim' });
+    { htmlBody: htmlBody, from: OB_CONFIG.FROM_EMAIL, name: 'AeroReclaim' });
 }
 
 
@@ -754,7 +755,7 @@ function sendMissingDocsEmail(caso, faltantes) {
   
   GmailApp.sendEmail(caso.email, subject,
     'Gracias por tu respuesta. Aún nos falta: ' + faltantes.join(', '),
-    { htmlBody: htmlBody, name: 'AeroReclaim' });
+    { htmlBody: htmlBody, from: OB_CONFIG.FROM_EMAIL, name: 'AeroReclaim' });
 }
 
 
@@ -790,7 +791,7 @@ function sendOnboardingCompleteEmail(caso) {
   
   GmailApp.sendEmail(caso.email, subject,
     'Documentación recibida. Tu caso ' + caso.casoId + ' está en marcha.',
-    { htmlBody: htmlBody, name: 'AeroReclaim' });
+    { htmlBody: htmlBody, from: OB_CONFIG.FROM_EMAIL, name: 'AeroReclaim' });
 }
 
 
