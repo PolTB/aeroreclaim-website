@@ -218,6 +218,112 @@
       </div>
     </div>
 
+    <!-- GARANTÍA PROMINENTE (Fix 3 Outsider) -->
+    <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);display:flex;align-items:center;gap:var(--space-3);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span style="font-size:var(--text-sm);color:#14532d;line-height:1.5;"><strong>Si pierdes, pagas 0€.</strong> Solo cobramos el 25% cuando la aerolínea paga. Sin gastos iniciales, sin letra pequeña.</span>
+    </div>
+
+    <!-- CALCULADORA DE COMPENSACIÓN (Fix 1 Outsider) -->
+    <div id="comp-calc" style="background:var(--color-surface);border:2px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-4);">
+      <p style="font-size:var(--text-sm);font-weight:700;color:var(--color-text);margin:0 0 var(--space-3);display:flex;align-items:center;gap:var(--space-2);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Calcula tu compensación al instante
+      </p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--space-2);margin-bottom:var(--space-3);">
+        <select id="calc-origin" style="padding:var(--space-2) var(--space-3);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);background:var(--color-bg);cursor:pointer;width:100%;">
+          <option value="">Origen...</option>
+          <optgroup label="España">
+            <option value="MAD|40.4168|-3.7038">Madrid</option>
+            <option value="BCN|41.2971|2.0785">Barcelona</option>
+            <option value="VLC|39.4893|-0.4810">Valencia</option>
+            <option value="SVQ|37.4180|-5.8931">Sevilla</option>
+            <option value="AGP|36.6749|-4.4991">Málaga</option>
+            <option value="PMI|39.5517|2.7388">Palma de Mallorca</option>
+            <option value="BIO|43.3010|-2.9106">Bilbao</option>
+            <option value="ALC|38.2822|-0.5581">Alicante</option>
+            <option value="LPA|27.9319|-15.3866">Gran Canaria</option>
+            <option value="TFS|28.0449|-16.5723">Tenerife</option>
+            <option value="IBZ|38.8729|1.3731">Ibiza</option>
+          </optgroup>
+          <optgroup label="Europa">
+            <option value="LHR|51.4775|-0.4613">Londres</option>
+            <option value="CDG|49.0097|2.5479">París</option>
+            <option value="AMS|52.3105|4.7683">Ámsterdam</option>
+            <option value="FCO|41.8003|12.2389">Roma</option>
+            <option value="BER|52.3667|13.5033">Berlín</option>
+            <option value="FRA|50.0379|8.5622">Fráncfort</option>
+            <option value="ATH|37.9364|23.9445">Atenas</option>
+            <option value="IST|41.2608|28.7418">Estambul</option>
+            <option value="DUB|53.4213|-6.2701">Dublín</option>
+            <option value="LIS|38.7813|-9.1359">Lisboa</option>
+            <option value="MXP|45.6306|8.7281">Milán</option>
+          </optgroup>
+          <optgroup label="Intercontinental">
+            <option value="JFK|40.6413|-73.7781">Nueva York</option>
+            <option value="MIA|25.7959|-80.2870">Miami</option>
+            <option value="BOG|4.7016|-74.1469">Bogotá</option>
+            <option value="MEX|19.4361|-99.0719">Ciudad de México</option>
+            <option value="EZE|-34.8222|-58.5358">Buenos Aires</option>
+            <option value="HAV|22.9892|-82.4091">La Habana</option>
+            <option value="CUN|21.0365|-86.8771">Cancún</option>
+            <option value="GRU|-23.4356|-46.4731">São Paulo</option>
+            <option value="DXB|25.2532|55.3657">Dubai</option>
+          </optgroup>
+        </select>
+        <span style="color:var(--color-text-muted);font-size:1.1rem;text-align:center;">→</span>
+        <select id="calc-dest" style="padding:var(--space-2) var(--space-3);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);background:var(--color-bg);cursor:pointer;width:100%;">
+          <option value="">Destino...</option>
+          <optgroup label="España">
+            <option value="MAD|40.4168|-3.7038">Madrid</option>
+            <option value="BCN|41.2971|2.0785">Barcelona</option>
+            <option value="VLC|39.4893|-0.4810">Valencia</option>
+            <option value="SVQ|37.4180|-5.8931">Sevilla</option>
+            <option value="AGP|36.6749|-4.4991">Málaga</option>
+            <option value="PMI|39.5517|2.7388">Palma de Mallorca</option>
+            <option value="BIO|43.3010|-2.9106">Bilbao</option>
+            <option value="ALC|38.2822|-0.5581">Alicante</option>
+            <option value="LPA|27.9319|-15.3866">Gran Canaria</option>
+            <option value="TFS|28.0449|-16.5723">Tenerife</option>
+            <option value="IBZ|38.8729|1.3731">Ibiza</option>
+          </optgroup>
+          <optgroup label="Europa">
+            <option value="LHR|51.4775|-0.4613">Londres</option>
+            <option value="CDG|49.0097|2.5479">París</option>
+            <option value="AMS|52.3105|4.7683">Ámsterdam</option>
+            <option value="FCO|41.8003|12.2389">Roma</option>
+            <option value="BER|52.3667|13.5033">Berlín</option>
+            <option value="FRA|50.0379|8.5622">Fráncfort</option>
+            <option value="ATH|37.9364|23.9445">Atenas</option>
+            <option value="IST|41.2608|28.7418">Estambul</option>
+            <option value="DUB|53.4213|-6.2701">Dublín</option>
+            <option value="LIS|38.7813|-9.1359">Lisboa</option>
+            <option value="MXP|45.6306|8.7281">Milán</option>
+          </optgroup>
+          <optgroup label="Intercontinental">
+            <option value="JFK|40.6413|-73.7781">Nueva York</option>
+            <option value="MIA|25.7959|-80.2870">Miami</option>
+            <option value="BOG|4.7016|-74.1469">Bogotá</option>
+            <option value="MEX|19.4361|-99.0719">Ciudad de México</option>
+            <option value="EZE|-34.8222|-58.5358">Buenos Aires</option>
+            <option value="HAV|22.9892|-82.4091">La Habana</option>
+            <option value="CUN|21.0365|-86.8771">Cancún</option>
+            <option value="GRU|-23.4356|-46.4731">São Paulo</option>
+            <option value="DXB|25.2532|55.3657">Dubai</option>
+          </optgroup>
+        </select>
+      </div>
+      <div id="calc-result" style="display:none;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:var(--radius-md);padding:var(--space-3);text-align:center;">
+        <p style="font-size:var(--text-xs);color:#16a34a;margin:0 0 var(--space-1);font-weight:500;">Compensación estimada por ley</p>
+        <p id="calc-amount" style="font-size:2rem;font-weight:800;color:#16a34a;margin:0 0 var(--space-3);">250€</p>
+        <a href="#origin-prefilter" class="btn btn--primary btn--sm" style="display:flex;justify-content:center;align-items:center;gap:var(--space-2);">
+          Reclamar ahora gratis
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <p id="calc-same" style="display:none;font-size:var(--text-xs);color:var(--color-text-muted);text-align:center;margin:var(--space-1) 0 0;">Elige origen y destino distintos</p>
+    </div>
+
     <!-- Pre-filtro de elegibilidad: origen del vuelo -->
     <div id="origin-prefilter" class="hero__form" style="padding:0;">
       <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:0 0 var(--space-3);">¿Desde dónde salió tu vuelo?</p>
@@ -362,7 +468,7 @@
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
         </div>
         <h3 class="step__title">Nosotros gestionamos todo</h3>
-        <p class="step__desc">Si tu caso tiene fundamento, te enviamos el mandato de representación. Lo firmas en dos minutos desde el móvil. A partir de ahí, AeroReclaim se encarga de la reclamación formal, la negociación con la aerolínea y, si hace falta, el proceso ante la AESA o el juzgado.</p>
+        <p class="step__desc">Si tu caso tiene fundamento, te enviamos la <strong>autorización para reclamar en tu nombre</strong>. La firmas en dos minutos desde el móvil. A partir de ahí, AeroReclaim se encarga de la reclamación formal, la negociación con la aerolínea y, si hace falta, el proceso ante la AESA o el juzgado.</p>
       </div>
 
       <div class="step animate-on-scroll">
@@ -523,6 +629,29 @@
   </div>
 </section>
 
+<!-- QUIÉNES SOMOS (Fix 2 Outsider) -->
+<section class="section" id="quienes-somos">
+  <div class="container container--narrow">
+    <div style="display:flex;align-items:flex-start;gap:2rem;flex-wrap:wrap;">
+      <div style="flex-shrink:0;">
+        <div style="width:88px;height:88px;border-radius:50%;background:var(--color-surface);border:3px solid var(--color-primary-light,#bfdbfe);display:flex;align-items:center;justify-content:center;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+      </div>
+      <div style="flex:1;min-width:220px;">
+        <span class="section__overline">Quién está detrás</span>
+        <h2 style="font-family:var(--font-heading);font-size:clamp(1.2rem,3vw,1.6rem);font-weight:700;color:var(--color-text);margin:var(--space-1) 0 var(--space-1);">Pol Tusquets Batlle</h2>
+        <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-2);">NIF: 46142330Y &nbsp;·&nbsp; Sant Just Desvern, Barcelona</p>
+        <a href="https://www.linkedin.com/in/pol-tusquets-batlle/" target="_blank" rel="noopener noreferrer" style="font-size:var(--text-sm);color:var(--color-primary);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:var(--space-3);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          Ver perfil en LinkedIn
+        </a>
+        <p style="font-size:var(--text-sm);color:var(--color-text);line-height:1.75;margin:0;">Me cancelaron un vuelo y la aerolínea se negó a pagar lo que la ley obliga. El proceso era opaco, lento y frustrante. Decidí construir la herramienta que me hubiera gustado tener. Soy yo quien gestiona los casos — con tecnología que agiliza el proceso, pero con supervisión directa en cada reclamación.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- TESTIMONIALS -->
 <section class="section section--surface" id="opiniones">
   <div class="container">
@@ -615,7 +744,7 @@
           <svg class="faq-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="faq-item__answer">
-          <p>Solo el número de vuelo y la fecha. Si tienes el boarding pass (físico o digital), mejor — pero no es imprescindible para comprobar si tienes caso. Para formalizar la reclamación necesitarás tu DNI o NIE.</p>
+          <p>Solo el número de vuelo y la fecha. Si tienes el boarding pass (físico o digital), mejor — pero no es imprescindible para comprobar si tienes caso. Para formalizar la reclamación necesitarás firmar la <strong>autorización para reclamar en tu nombre</strong> y facilitar tu DNI o NIE.</p>
         </div>
       </details>
 
@@ -816,5 +945,76 @@
 <script src="./flight-data.js"></script>
 <script src="./validator.js"></script>
 <script src="./app.js" defer></script>
+
+<!-- FLOATING WHATSAPP BUTTON -->
+<a href="https://wa.me/34694205689?text=Hola%2C%20quiero%20reclamar%20un%20vuelo%20y%20tengo%20una%20pregunta%20antes%20de%20firmar"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="whatsapp-fab"
+   aria-label="Contactar por WhatsApp"
+   title="¿Tienes dudas? Escríbenos por WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+  <span class="whatsapp-fab__label">¿Dudas? WhatsApp</span>
+</a>
+
+<style>
+.whatsapp-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #25D366;
+  color: #fff;
+  border-radius: 2rem;
+  padding: 0.75rem 1.25rem 0.75rem 1rem;
+  text-decoration: none;
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.45);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.whatsapp-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37,211,102,0.55);
+}
+@media (max-width: 480px) {
+  .whatsapp-fab__label { display: none; }
+  .whatsapp-fab { padding: 0.875rem; border-radius: 50%; }
+}
+</style>
+
+<script>
+(function(){
+  var sel1=document.getElementById('calc-origin'),
+      sel2=document.getElementById('calc-dest'),
+      res=document.getElementById('calc-result'),
+      amt=document.getElementById('calc-amount'),
+      same=document.getElementById('calc-same');
+  if(!sel1||!sel2) return;
+  function haversine(a,b,c,d){
+    var R=6371,dr=(c-a)*Math.PI/180,dl=(d-b)*Math.PI/180;
+    var x=Math.sin(dr/2)*Math.sin(dr/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dl/2)*Math.sin(dl/2);
+    return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+  }
+  function parse(v){ var p=v.split('|'); return {lat:+p[1],lon:+p[2]}; }
+  function calc(){
+    var o=sel1.value,d=sel2.value;
+    res.style.display='none'; same.style.display='none';
+    if(!o||!d) return;
+    if(o===d){ same.style.display='block'; return; }
+    var km=haversine(parse(o).lat,parse(o).lon,parse(d).lat,parse(d).lon);
+    amt.textContent=km<1500?'250€':km<=3500?'400€':'600€';
+    res.style.display='block';
+  }
+  sel1.addEventListener('change',calc);
+  sel2.addEventListener('change',calc);
+})();
+</script>
 </body>
 </html>
