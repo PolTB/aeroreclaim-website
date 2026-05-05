@@ -3,14 +3,72 @@
 (function() {
   'use strict';
 
-  // ===== REFERRAL TRACKING =====
-  // Persist ?ref= param across page navigations within the session
+  // ===== REFERRAL & UTM TRACKING =====
+  // Captura UTMs, ?ref= de afiliados, y document.referrer al cargar la página.
+  // Se persiste en sessionStorage para que el dato esté disponible aunque el
+  // usuario navegue varias páginas antes de rellenar el formulario.
   (function() {
-    var ref = new URLSearchParams(window.location.search).get('ref');
+    var params = new URLSearchParams(window.location.search);
+
+    // 1. Afiliados: ?ref=nombre → tiene prioridad máxima
+    var ref = params.get('ref');
     if (ref) {
       try { sessionStorage.setItem('aeroreclaim_ref', ref); } catch(e) {}
     }
+
+    // 2. UTMs: capturar en una sola clave JSON si vienen en la URL
+    var src      = params.get('utm_source');
+    var medium   = params.get('utm_medium');
+    var campaign = params.get('utm_campaign');
+    var content  = params.get('utm_content');
+    var term     = params.get('utm_term');
+
+    if (src || medium || campaign) {
+      var utmData = { src: src, med: medium, cam: campaign, con: content, ter: term };
+      try { sessionStorage.setItem('aeroreclaim_utm', JSON.stringify(utmData)); } catch(e) {}
+    }
+
+    // 3. Referrer externo: guardar si no hay UTMs y viene de fuera
+    if (!src && !medium && document.referrer) {
+      var isInternal = document.referrer.indexOf('aeroreclaim.com') >= 0;
+      if (!isInternal) {
+        try {
+          if (!sessionStorage.getItem('aeroreclaim_utm')) {
+            sessionStorage.setItem('aeroreclaim_referrer', document.referrer);
+          }
+        } catch(e) {}
+      }
+    }
   })();
+
+  // Helper: construir string referral_source a partir de UTM / ref / referrer
+  function buildReferralSource(refParam) {
+    // Prioridad 1: afiliado ?ref=
+    if (refParam) return 'ref:' + refParam;
+
+    // Prioridad 2: UTMs guardados en sessionStorage
+    try {
+      var utmRaw = sessionStorage.getItem('aeroreclaim_utm');
+      if (utmRaw) {
+        var utm = JSON.parse(utmRaw);
+        var parts = [utm.src || '', utm.med || '', utm.cam || ''];
+        var label = parts.filter(Boolean).join(' / ');
+        if (utm.con) label += ' / ' + utm.con;
+        if (utm.ter) label += ' / ' + utm.ter;
+        return label || 'utm_unknown';
+      }
+    } catch(e) {}
+
+    // Prioridad 3: referrer externo
+    try {
+      var referrer = sessionStorage.getItem('aeroreclaim_referrer');
+      if (referrer) {
+        try { return 'referrer:' + new URL(referrer).hostname; } catch(e) { return 'referrer:' + referrer.slice(0, 80); }
+      }
+    } catch(e) {}
+
+    return 'organic';
+  }
 
   // ===== THEME TOGGLE =====
   var toggle = document.querySelector('[data-theme-toggle]');
@@ -438,6 +496,9 @@
       // Collect lead data
       var refParam = new URLSearchParams(window.location.search).get('ref') || '';
       if (!refParam) { try { refParam = sessionStorage.getItem('aeroreclaim_ref') || ''; } catch(e) {} }
+
+      // Construir referral_source completo (UTM > ref > referrer > organic)
+      var referralSource = buildReferralSource(refParam);
       var leadData = {
         name: name.value.trim(),
         email: email.value.trim(),
@@ -446,7 +507,7 @@
         date: dateStr,
         airline: result.airline ? result.airline.name : '',
         compensation_est: comp.estimated,
-        referral: refParam,
+        referral: referralSource,   // full UTM string (e.g. 'google / cpc / test')
         timestamp: new Date().toISOString()
       };
 
@@ -465,7 +526,7 @@
         'airline_name=' + encodeURIComponent(leadData.airline),
         'incident_type=' + encodeURIComponent(issueMap[leadData.issue] || leadData.issue),
         'estimated_compensation=' + encodeURIComponent(leadData.compensation_est + '€'),
-        'referral_source=' + encodeURIComponent(leadData.referral || '')
+        'referral_source=' + encodeURIComponent(referralSource)
       ].join('&');
       try {
         fetch(LEAD_API, {
