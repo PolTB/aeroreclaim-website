@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
 <head>
-<meta charset="UTF-8">
 <!--
    ______                            __
   / ____/___  ____ ___  ____  __  __/ /____  _____
@@ -9,10 +8,17 @@
 / /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
 \____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
                     /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
 -->
 
+<!-- Perplexity Computer Attribution — SEO Meta Tags -->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
 
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AeroReclaim — Reclamación de compensación por vuelos retrasados o cancelados</title>
 <meta name="description" content="¿Vuelo retrasado o cancelado? Reclama hasta 600€ de compensación. Sin gastos iniciales. Solo cobramos si ganamos. Proceso 100% digital en 2 minutos.">
@@ -71,6 +77,8 @@
     "knowsAbout": ["CE 261/2004", "Compensación por vuelo retrasado", "Compensación por vuelo cancelado", "Overbooking"],
     "creator": {
       "@type": "SoftwareApplication",
+      "name": "Perplexity Computer",
+      "url": "https://www.perplexity.ai/computer"
     }
   },
   {
@@ -201,23 +209,95 @@
         <span><strong>¿Puedo reclamar?</strong> Sí — si tu vuelo llegó tarde +3h, fue cancelado o te denegaron el embarque</span>
       </div>
       <div class="trust-badge">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9.5C14.3 8.3 13.2 7.5 12 7.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5c1.2 0 2.3-.8 3-2"/><line x1="7.5" y1="11.5" x2="14" y2="11.5"/><line x1="7.5" y1="13.5" x2="13" y2="13.5"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         <span><strong>¿Cuánto cobro?</strong> Hasta <strong>600€</strong> por pasajero según la distancia del vuelo</span>
       </div>
-      <div class="trust-badge">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-        <span><strong>¿Qué me cuesta?</strong> <strong>0€ si no ganamos</strong> — solo el 25% si la aerolínea paga</span>
+      <div class="trust-badge" style="background:var(--color-success-highlight);border:1.5px solid var(--color-success);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);font-size:var(--text-sm);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-success-active)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span><strong>Si no ganamos, pagas 0€.</strong> Solo cobramos el 25% cuando la aerolínea paga.</span>
       </div>
+
+      <!-- CALCULADORA RÁPIDA AER-121 -->
+      <div id="compensacion-calc" style="margin-top:var(--space-4);padding:var(--space-4);background:var(--color-surface);border:1.5px solid var(--color-border);border-radius:var(--radius-xl);">
+        <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:0 0 var(--space-3);">¿Cuánto te corresponde? Calcula en segundos:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);margin-bottom:var(--space-2);">
+          <select id="calc-origen" style="padding:var(--space-2) var(--space-3);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);background:var(--color-bg);">
+            <option value="">Origen</option>
+            <option value="BCN">Barcelona (BCN)</option>
+            <option value="MAD">Madrid (MAD)</option>
+            <option value="AGP">Málaga (AGP)</option>
+            <option value="PMI">Palma (PMI)</option>
+            <option value="VLC">Valencia (VLC)</option>
+            <option value="SVQ">Sevilla (SVQ)</option>
+            <option value="LHR">Londres (LHR)</option>
+            <option value="CDG">París (CDG)</option>
+            <option value="MXP">Milán (MXP)</option>
+            <option value="AMS">Ámsterdam (AMS)</option>
+            <option value="JFK">Nueva York (JFK)</option>
+            <option value="GRU">São Paulo (GRU)</option>
+            <option value="HAV">La Habana (HAV)</option>
+          </select>
+          <select id="calc-destino" style="padding:var(--space-2) var(--space-3);border:1.5px solid var(--color-border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text);background:var(--color-bg);">
+            <option value="">Destino</option>
+            <option value="BCN">Barcelona (BCN)</option>
+            <option value="MAD">Madrid (MAD)</option>
+            <option value="AGP">Málaga (AGP)</option>
+            <option value="PMI">Palma (PMI)</option>
+            <option value="VLC">Valencia (VLC)</option>
+            <option value="SVQ">Sevilla (SVQ)</option>
+            <option value="LHR">Londres (LHR)</option>
+            <option value="CDG">París (CDG)</option>
+            <option value="MXP">Milán (MXP)</option>
+            <option value="AMS">Ámsterdam (AMS)</option>
+            <option value="JFK">Nueva York (JFK)</option>
+            <option value="GRU">São Paulo (GRU)</option>
+            <option value="HAV">La Habana (HAV)</option>
+          </select>
+        </div>
+        <div id="calc-resultado" style="display:none;margin-bottom:var(--space-3);padding:var(--space-3);background:var(--color-primary-highlight);border-radius:var(--radius-md);text-align:center;">
+          <span style="font-size:var(--text-xs);color:var(--color-text-muted);display:block;margin-bottom:var(--space-1);">Compensación que te corresponde</span>
+          <span id="calc-cifra" style="font-size:2rem;font-weight:800;color:var(--color-primary);font-family:var(--font-display);">—€</span>
+          <span style="font-size:var(--text-xs);color:var(--color-text-muted);display:block;margin-top:var(--space-1);">si hay retraso >3h o cancelación</span>
+        </div>
+        <button id="calc-reclamar" onclick="document.getElementById('origin-eu').click()" style="display:none;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;cursor:pointer;">
+          Reclamar ahora gratis →
+        </button>
+        <p id="calc-placeholder" style="font-size:var(--text-xs);color:var(--color-text-muted);text-align:center;margin:var(--space-2) 0 0;">Selecciona origen y destino para ver tu compensación</p>
+      </div>
+      <script>
+      (function(){
+        // Distancias aproximadas en km para cálculo CE 261/2004
+        var COORDS = {
+          BCN:{lat:41.3,lon:2.1}, MAD:{lat:40.5,lon:-3.6}, AGP:{lat:36.7,lon:-4.5},
+          PMI:{lat:39.5,lon:2.7}, VLC:{lat:39.5,lon:-0.5}, SVQ:{lat:37.4,lon:-5.9},
+          LHR:{lat:51.5,lon:-0.5}, CDG:{lat:49.0,lon:2.5}, MXP:{lat:45.6,lon:8.7},
+          AMS:{lat:52.3,lon:4.8}, JFK:{lat:40.6,lon:-73.8}, GRU:{lat:-23.4,lon:-46.5},
+          HAV:{lat:22.99,lon:-82.41}
+        };
+        function haversine(a,b){
+          var R=6371,d2r=Math.PI/180;
+          var dLat=(b.lat-a.lat)*d2r, dLon=(b.lon-a.lon)*d2r;
+          var x=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a.lat*d2r)*Math.cos(b.lat*d2r)*Math.sin(dLon/2)*Math.sin(dLon/2);
+          return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+        }
+        function calcular(){
+          var o=document.getElementById('calc-origen').value;
+          var d=document.getElementById('calc-destino').value;
+          if(!o||!d||o===d){return;}
+          var dist=haversine(COORDS[o],COORDS[d]);
+          var comp=dist<1500?250:dist<=3500?400:600;
+          document.getElementById('calc-cifra').textContent=comp+'€';
+          document.getElementById('calc-resultado').style.display='block';
+          document.getElementById('calc-reclamar').style.display='block';
+          document.getElementById('calc-placeholder').style.display='none';
+        }
+        document.getElementById('calc-origen').addEventListener('change',calcular);
+        document.getElementById('calc-destino').addEventListener('change',calcular);
+      })();
+      </script>
     </div>
 
-    <!-- GARANTÍA PROMINENTE (Fix 3 Outsider) -->
-    <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);display:flex;align-items:center;gap:var(--space-3);">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-      <span style="font-size:var(--text-sm);color:#14532d;line-height:1.5;"><strong>Si pierdes, pagas 0€.</strong> Solo cobramos el 25% cuando la aerolínea paga. Sin gastos iniciales, sin letra pequeña.</span>
-    </div>
-
-
-        <!-- Pre-filtro de elegibilidad: origen del vuelo -->
+    <!-- Pre-filtro de elegibilidad: origen del vuelo -->
     <div id="origin-prefilter" class="hero__form" style="padding:0;">
       <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:0 0 var(--space-3);">¿Desde dónde salió tu vuelo?</p>
       <div style="display:flex;flex-direction:column;gap:var(--space-2);">
@@ -336,6 +416,47 @@
   </div>
 </section>
 
+<!-- AVISO TEMPORAL: HUELGA CONTROLADORES -->
+<section class="section" id="huelga-controladores" style="background:var(--color-warning-highlight);padding:clamp(1.5rem,4vw,2.5rem) 0;border-top:3px solid var(--color-warning);border-bottom:3px solid var(--color-warning);">
+  <div class="container container--narrow">
+    <div class="section__header" style="text-align:left;margin-bottom:1.5rem;">
+      <span class="section__overline" style="color:var(--color-warning-active);">⚠️ Aviso temporal — Activo desde 17/04/2026</span>
+      <h2 class="section__title" style="color:var(--color-warning-active);font-size:clamp(1.25rem,3vw,1.75rem);">Huelga de controladores aéreos en España: lo que debes saber</h2>
+      <p class="section__desc" style="color:var(--color-text);">La huelga de controladores aéreos es una <strong>circunstancia extraordinaria</strong> según el Reglamento CE 261/2004. Esto significa que las aerolíneas quedan <strong>exentas de pagar compensación económica</strong> por los vuelos afectados.</p>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-card animate-on-scroll" style="border:1.5px solid var(--color-success);background:var(--color-success-highlight);">
+        <div class="why-card__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-success-active)" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="why-card__title" style="color:var(--color-success-active);">Sí tienes derecho a asistencia</h3>
+        <p class="why-card__desc">Aunque no hay compensación económica, la aerolínea <strong>sí está obligada</strong> a ofrecerte: comidas y bebidas adecuadas según el tiempo de espera, alojamiento en hotel si el vuelo se retrasa al día siguiente, y transporte entre el aeropuerto y el hotel. Exige siempre estos derechos en el mostrador de la aerolínea.</p>
+      </div>
+
+      <div class="why-card animate-on-scroll" style="border:1.5px solid var(--color-error);background:var(--color-error-highlight);">
+        <div class="why-card__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-error-active)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        </div>
+        <h3 class="why-card__title" style="color:var(--color-error-active);">No hay compensación económica</h3>
+        <p class="why-card__desc">La huelga de controladores aéreos está reconocida como circunstancia extraordinaria por los tribunales europeos. La aerolínea no está obligada a pagar los 250€, 400€ o 600€ de compensación CE 261/2004 por vuelos afectados directamente por esta huelga.</p>
+      </div>
+
+      <div class="why-card animate-on-scroll" style="border:1.5px solid var(--color-warning);background:#fffbeb;">
+        <div class="why-card__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning-active)" stroke-width="1.5"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        </div>
+        <h3 class="why-card__title" style="color:var(--color-warning-active);">AeroReclaim no tramita estos casos</h3>
+        <p class="why-card__desc">No aceptamos reclamaciones de vuelos afectados por esta huelga de controladores porque, legalmente, la aerolínea no está obligada a compensarte. Si tu vuelo se ha visto afectado, dirígete al mostrador de tu aerolínea para exigir asistencia inmediata.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:1.5rem;font-size:0.85rem;color:var(--color-text-muted);text-align:center;">
+      ¿Tu vuelo fue afectado por otro motivo distinto a la huelga? <a href="/#validador" style="color:var(--color-primary);font-weight:600;">Comprueba si tienes caso →</a>
+    </p>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section class="section" id="como-funciona">
   <div class="container">
@@ -435,7 +556,7 @@
       </div>
       <div class="why-card animate-on-scroll">
         <div class="why-card__icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <h3 class="why-card__title">Nuestra comisión</h3>
         <p class="why-card__desc">AeroReclaim cobra el <strong>25% + IVA</strong> solo si ganas. Si no recuperamos compensación, no te cobramos nada. Sin cuotas mensuales, sin costes ocultos, sin sorpresas.</p>
@@ -462,7 +583,7 @@
       </div>
       <div class="why-card animate-on-scroll">
         <div class="why-card__icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.5"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <h3 class="why-card__title">Solo 25% de comisión</h3>
         <p class="why-card__desc">La comisión más competitiva del mercado. Tú recibes más.</p>
@@ -521,7 +642,6 @@
     </div>
   </div>
 </section>
-
 
 <!-- TESTIMONIALS -->
 <section class="section section--surface" id="opiniones">
@@ -615,7 +735,7 @@
           <svg class="faq-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="faq-item__answer">
-          <p>Solo el número de vuelo y la fecha. Si tienes el boarding pass (físico o digital), mejor — pero no es imprescindible para comprobar si tienes caso. Para formalizar la reclamación necesitarás firmar la <strong>autorización para reclamar en tu nombre</strong> y facilitar tu DNI o NIE.</p>
+          <p>Solo el número de vuelo y la fecha. Si tienes el boarding pass (físico o digital), mejor — pero no es imprescindible para comprobar si tienes caso. Para formalizar la reclamación necesitarás tu DNI o NIE.</p>
         </div>
       </details>
 
@@ -685,7 +805,7 @@
           <svg class="faq-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="faq-item__answer">
-          <p>Casi nada. Tu parte es: comprobar el vuelo en el validador, firmar el mandato de representación (2 minutos desde el móvil) y facilitarnos tu DNI. A partir de ahí nos encargamos nosotros de todo. Te avisamos cuando haya novedades.</p>
+          <p>Casi nada. Tu parte es: comprobar el vuelo en el validador, firmar la <strong>autorización para reclamar en tu nombre</strong> (2 minutos desde el móvil) y facilitarnos tu DNI. A partir de ahí nos encargamos nosotros de todo. Te avisamos cuando haya novedades.</p>
         </div>
       </details>
 
@@ -760,6 +880,28 @@
 
 </main>
 
+<!-- QUIÉN ESTÁ DETRÁS — AER-121 Fix 2 -->
+<section class="section section--surface" id="quienes-somos">
+  <div class="container container--narrow">
+    <div style="display:flex;align-items:flex-start;gap:var(--space-6);flex-wrap:wrap;">
+      <div style="flex-shrink:0;text-align:center;">
+        <img src="./assets/pol-tusquets.jpg" alt="Pol Tusquets Batlle" style="width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:top center;margin:0 auto var(--space-2);display:block;">
+        <p style="font-size:var(--text-xs);color:var(--color-text-muted);margin:0;white-space:nowrap;">Pol Tusquets Batlle</p>
+        <a href="https://linkedin.com/in/poltusquets" target="_blank" rel="noopener" style="font-size:var(--text-xs);color:var(--color-primary);text-decoration:none;">LinkedIn →</a>
+      </div>
+      <div style="flex:1;min-width:220px;">
+        <span class="section__overline">Quién está detrás</span>
+        <h3 style="font-family:var(--font-display);font-size:clamp(1.1rem,2.5vw,1.35rem);font-weight:700;color:var(--color-text);margin:var(--space-1) 0 var(--space-3);">Creé AeroReclaim porque las aerolíneas saben que la mayoría de pasajeros se rinden</h3>
+        <p style="font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.7;margin:0 0 var(--space-3);">Tuve un vuelo retrasado 4 horas. Vueling tardó 3 meses en contestar y ofreció un bono de viaje — no la compensación en efectivo que la ley me garantizaba. Decidí montar esto para que nadie más tuviera que pelearse solo con la burocracia de las aerolíneas.</p>
+        <div style="display:flex;gap:var(--space-4);flex-wrap:wrap;">
+          <span style="font-size:var(--text-xs);color:var(--color-text-muted);">NIF empresa: <strong>46142330Y</strong></span>
+          <span style="font-size:var(--text-xs);color:var(--color-text-muted);">info@aeroreclaim.com</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer class="footer">
   <div class="container">
@@ -801,7 +943,6 @@
           <li><a href="#opiniones" class="footer__link">Opiniones</a></li>
           <li><a href="#faq" class="footer__link">FAQ</a></li>
           <li><a href="./blog/" class="footer__link">Blog</a></li>
-          <li><a href="./nosotros.html" class="footer__link">Sobre nosotros</a></li>
         </ul>
       </div>
     </div>
@@ -809,64 +950,24 @@
     <div class="footer__bottom">
       <p>&copy; 2026 AeroReclaim. Todos los derechos reservados.</p>
       <p class="footer__legal">AeroReclaim es una plataforma tecnológica de gestión de reclamaciones. No somos un despacho de abogados.</p>
+      <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer" class="footer__attribution">Created with Perplexity Computer</a>
     </div>
   </div>
 </footer>
 
 <script src="./flight-data.js"></script>
 <script src="./validator.js"></script>
-<script src="./app.js" defer></script>
-
-<!-- FLOATING WHATSAPP BUTTON -->
-<a id="wa-fab" href="#"
-   target="_blank"
-   rel="noopener noreferrer"
-   class="whatsapp-fab"
+<script src="./app.js" defer></script><!-- WHATSAPP FLOTANTE — AER-121 Fix 5 -->
+<a href="https://wa.me/34694205689?text=Hola%2C%20quiero%20reclamar%20un%20vuelo%20y%20tengo%20una%20pregunta%20antes%20de%20firmar"
+   target="_blank" rel="noopener"
    aria-label="Contactar por WhatsApp"
-   title="¿Tienes dudas? Escríbenos por WhatsApp">
-  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+   style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;align-items:center;justify-content:center;width:56px;height:56px;background:#25D366;border-radius:50%;box-shadow:0 4px 16px rgba(37,211,102,0.4);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;"
+   onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 20px rgba(37,211,102,0.5)'"
+   onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(37,211,102,0.4)'">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
   </svg>
-  <span class="whatsapp-fab__label">¿Dudas? WhatsApp</span>
 </a>
-
-<style>
-.whatsapp-fab {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #25D366;
-  color: #fff;
-  border-radius: 2rem;
-  padding: 0.75rem 1.25rem 0.75rem 1rem;
-  text-decoration: none;
-  font-family: var(--font-body, sans-serif);
-  font-size: 0.875rem;
-  font-weight: 600;
-  box-shadow: 0 4px 16px rgba(37,211,102,0.45);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.whatsapp-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37,211,102,0.55);
-}
-@media (max-width: 480px) {
-  .whatsapp-fab__label { display: none; }
-  .whatsapp-fab { padding: 0.875rem; border-radius: 50%; }
-}
-</style>
-
-<script>
-(function(){
-  var p=['34','694','20','5','689'];
-  var t=encodeURIComponent('Hola, quiero reclamar un vuelo y tengo una pregunta antes de firmar');
-  document.getElementById('wa-fab').href='https://wa.me/'+p.join('')+'?text='+t;
-})();
-</script>
 
 </body>
 </html>
