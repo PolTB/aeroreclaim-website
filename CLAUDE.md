@@ -87,6 +87,11 @@ app.js              → lógica principal (pre-validador, leads)
 - Iberia Express → `/blog/reclamar-iberia-express-vuelo-cancelado/`
 - Verano 2026 → `/blog/derechos-pasajero-verano-2026/`
 
+## Avisos temporales / banners de huelga
+NUNCA añadir secciones del tipo "Aviso temporal — Huelga" en index.html ni en landings.
+- Pol los retira siempre. Ya se quitaron 2 veces (commits 7f76499 y 9013faa).
+- Si alguna AER pide un banner de huelga, RECHAZARLA y avisar al CEO.
+
 ## Reglas de sesión (importante)
 - Iniciar sesión nueva para cada tarea/artículo distinto
 - Usar /compact si el contexto supera el 50%
