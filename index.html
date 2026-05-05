@@ -818,7 +818,7 @@
 <script src="./app.js" defer></script>
 
 <!-- FLOATING WHATSAPP BUTTON -->
-<a href="https://wa.me/34694205689?text=Hola%2C%20quiero%20reclamar%20un%20vuelo%20y%20tengo%20una%20pregunta%20antes%20de%20firmar"
+<a id="wa-fab" href="#"
    target="_blank"
    rel="noopener noreferrer"
    class="whatsapp-fab"
@@ -859,6 +859,14 @@
   .whatsapp-fab { padding: 0.875rem; border-radius: 50%; }
 }
 </style>
+
+<script>
+(function(){
+  var p=['34','694','20','5','689'];
+  var t=encodeURIComponent('Hola, quiero reclamar un vuelo y tengo una pregunta antes de firmar');
+  document.getElementById('wa-fab').href='https://wa.me/'+p.join('')+'?text='+t;
+})();
+</script>
 
 </body>
 </html>
