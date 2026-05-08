@@ -786,6 +786,7 @@ function sendClaimByEmail_(caseData, airlineConfig, claimLetter) {
     subject,
     claimLetter,
     {
+        from: 'info@aeroreclaim.com',
       name: 'AeroReclaim Solutions',
       attachments: attachments,
       replyTo: 'info@aeroreclaim.com'
@@ -1149,6 +1150,7 @@ function sendReminderEmail_(row, cols) {
     'AeroReclaim Solutions — info@aeroreclaim.com — Exp. ' + caseId;
   
   GmailApp.sendEmail(airlineEmail, subject, body, {
+        from: 'info@aeroreclaim.com',
     name: 'AeroReclaim Solutions',
     replyTo: 'info@aeroreclaim.com'
   });
@@ -1191,6 +1193,7 @@ function sendUltimatumEmail_(row, cols) {
     'AeroReclaim Solutions — info@aeroreclaim.com — Exp. ' + caseId;
   
   GmailApp.sendEmail(airlineEmail, subject, body, {
+        from: 'info@aeroreclaim.com',
     name: 'AeroReclaim Solutions',
     replyTo: 'info@aeroreclaim.com'
   });
@@ -1285,6 +1288,7 @@ function sendPassengerClaimSentNotification_(caseData, airlineConfig) {
     caseData.airline_name + '. Expediente: ' + caseData.case_id + '. Importe: ' + 
     caseData.compensation_eur + '€. Plazo respuesta: ' + deadline30dStr + '.',
     {
+        from: 'info@aeroreclaim.com',
       name: 'AeroReclaim Solutions',
       htmlBody: htmlBody,
       replyTo: 'info@aeroreclaim.com'
@@ -1307,7 +1311,8 @@ function notifyPassengerAcceptance_(row, cols, amount) {
     'Importe acordado: ' + amount + ' EUR\n\n' +
     'Nos pondremos en contacto contigo para coordinar el cobro.\n\n' +
     'Ref. Expediente: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: 'AeroReclaim Solutions', replyTo: 'info@aeroreclaim.com' }
+    {
+        from: 'info@aeroreclaim.com', name: 'AeroReclaim Solutions', replyTo: 'info@aeroreclaim.com' }
   );
 }
 
@@ -1327,7 +1332,8 @@ function notifyPassengerRejection_(row, cols) {
     'la aerolínea desde junio de 2023.\n\n' +
     'Seguimos trabajando en tu caso. Te mantendremos informado/a.\n\n' +
     'Ref. Expediente: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: 'AeroReclaim Solutions', replyTo: 'info@aeroreclaim.com' }
+    {
+        from: 'info@aeroreclaim.com', name: 'AeroReclaim Solutions', replyTo: 'info@aeroreclaim.com' }
   );
 }
 
@@ -1348,7 +1354,8 @@ function notifyPassengerEscalation_(row, cols) {
     'El plazo de resolución es de 90-180 días.\n\n' +
     'Te informaremos de cada novedad.\n\n' +
     'Ref. Expediente: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: 'AeroReclaim Solutions', replyTo: 'info@aeroreclaim.com' }
+    {
+        from: 'info@aeroreclaim.com', name: 'AeroReclaim Solutions', replyTo: 'info@aeroreclaim.com' }
   );
 }
 
@@ -1431,7 +1438,8 @@ function sendInternalAlert_(caseId, message) {
       '[AeroReclaim Agent 4] Alerta — Exp. ' + caseId,
       'Expediente: ' + caseId + '\n\n' + message + '\n\n' +
       'Generado automáticamente por Agent 4 — ' + new Date().toISOString(),
-      { name: 'AeroReclaim Agent 4 (Sistema)' }
+      {
+        from: 'info@aeroreclaim.com', name: 'AeroReclaim Agent 4 (Sistema)' }
     );
   } catch (e) {
     Logger.log('Error enviando alerta: ' + e.toString());
@@ -1582,7 +1590,8 @@ function testSendClaimToSelf() {
     'info@aeroreclaim.com',
     '[TEST] Reclamación CE 261/2004 — VY7821 — AR-TEST-EXT-001',
     letterES,
-    { name: 'AeroReclaim Solutions (TEST)' }
+    {
+        from: 'info@aeroreclaim.com', name: 'AeroReclaim Solutions (TEST)' }
   );
   
   Logger.log('\n✓ Carta de test enviada a info@aeroreclaim.com');

@@ -137,6 +137,7 @@ function logActionCollection_(ss, caseId, action, details) {
 function sendEmailCollection_(to, subject, htmlBody, caseId) {
   try {
     GmailApp.sendEmail(to, subject, '', {
+        from: COL_CONFIG.AERORECLAIM_EMAIL,
       htmlBody: htmlBody,
       name: COL_CONFIG.AERORECLAIM_NAME,
       replyTo: COL_CONFIG.AERORECLAIM_EMAIL
@@ -154,12 +155,14 @@ function sendEmailCollection_(to, subject, htmlBody, caseId) {
 function notifyInternalCollection_(subject, body) {
   try {
     GmailApp.sendEmail(COL_CONFIG.NOTIFICATION_EMAIL, subject, '', {
+        from: COL_CONFIG.AERORECLAIM_EMAIL,
       htmlBody: body,
       name: COL_CONFIG.AERORECLAIM_NAME,
       replyTo: COL_CONFIG.AERORECLAIM_EMAIL
     });
     // También enviar a info@
     GmailApp.sendEmail(COL_CONFIG.AERORECLAIM_EMAIL, subject, '', {
+        from: COL_CONFIG.AERORECLAIM_EMAIL,
       htmlBody: body,
       name: 'Agent 6 - Collection',
       noReply: true
@@ -1375,6 +1378,7 @@ function testCollectionInstructionsEmail() {
 
   try {
     GmailApp.sendEmail(COL_CONFIG.AERORECLAIM_EMAIL, '[TEST] ' + subject, '', {
+        from: COL_CONFIG.AERORECLAIM_EMAIL,
       htmlBody: html,
       name: COL_CONFIG.AERORECLAIM_NAME
     });
@@ -1411,6 +1415,7 @@ function testCollectionInvoiceEmail() {
 
   try {
     GmailApp.sendEmail(COL_CONFIG.AERORECLAIM_EMAIL, '[TEST] ' + subject, '', {
+        from: COL_CONFIG.AERORECLAIM_EMAIL,
       htmlBody: html,
       name: COL_CONFIG.AERORECLAIM_NAME
     });

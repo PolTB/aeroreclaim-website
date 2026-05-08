@@ -170,10 +170,10 @@ function processNewOnboardingCases() {
       sheet.getRange(actualRow, OB_CONFIG.COL.NOTAS).setValue('Error: ' + error.toString());
       // Notificar error
       try {
-        MailApp.sendEmail(OB_CONFIG.NOTIFICATION_EMAIL, 
+        GmailApp.sendEmail(OB_CONFIG.NOTIFICATION_EMAIL, 
           '⚠️ Error Agente 3 — ' + casoId,
           'Error al enviar bienvenida.\nCaso: ' + casoId + '\nEmail: ' + email + 
-          '\nError: ' + error.toString());
+          '\nError: ' + error.toString(), { from: OB_CONFIG.FROM_EMAIL });
       } catch(e2) {}
     }
   }
@@ -337,7 +337,7 @@ function processClientResponse(ss, sheet, sheetRow, caso, message) {
     sendOnboardingCompleteEmail(caso);
     
     // Notificar al admin
-    MailApp.sendEmail(
+    GmailApp.sendEmail(
       OB_CONFIG.NOTIFICATION_EMAIL,
       '🎉 Onboarding COMPLETO — ' + caso.casoId,
       'El pasajero ha enviado toda la documentación.\n\n' +
@@ -346,7 +346,7 @@ function processClientResponse(ss, sheet, sheetRow, caso, message) {
       'Vuelo: ' + caso.vuelo + ' — ' + caso.aerolinea + '\n' +
       'Compensación: ' + caso.compensacion + '€\n\n' +
       'El caso está listo para la fase extrajudicial.'
-    );
+    , { from: OB_CONFIG.FROM_EMAIL });
     
     // Marcar como listo para extrajudicial
     sheet.getRange(sheetRow, OB_CONFIG.COL.ESTADO).setValue('LISTO_EXTRAJUDICIAL');
@@ -432,10 +432,10 @@ function sendReminders() {
         Logger.log('🚫 Caso abandonado: ' + casoId);
         
         // Notificar admin
-        MailApp.sendEmail(OB_CONFIG.NOTIFICATION_EMAIL,
+        GmailApp.sendEmail(OB_CONFIG.NOTIFICATION_EMAIL,
           '🚫 Caso ABANDONADO — ' + casoId,
           'El pasajero no respondió en ' + OB_CONFIG.ABANDON_DAYS + ' días.\n' +
-          'Caso: ' + casoId + '\nPasajero: ' + caso.nombre + ' (' + caso.email + ')');
+          'Caso: ' + casoId + '\nPasajero: ' + caso.nombre + ' (' + caso.email + ')', { from: OB_CONFIG.FROM_EMAIL });
       }
     } catch(error) {
       Logger.log('❌ Error en reminder ' + casoId + ': ' + error.toString());
@@ -639,7 +639,7 @@ function sendWelcomeEmail(caso, mandatoPdf) {
   GmailApp.sendEmail(caso.email, subject, 
     'Hola ' + caso.nombre + ', tu vuelo ' + caso.vuelo + ' cumple los requisitos para reclamar ' + 
     compensacionStr + '€. Responde con tu tarjeta de embarque, DNI y escribe ACEPTO.',
-    options);
+    options, { from: OB_CONFIG.FROM_EMAIL });
 }
 
 

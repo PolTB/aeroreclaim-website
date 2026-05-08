@@ -17,6 +17,7 @@ const LEGAL_CONFIG = {
   SHEET_REVIEW:     "Review_Queue",
   SHEET_ONBOARDING: "Onboarding_Queue",
   ADMIN_EMAIL:      "info@aeroreclaim.com",
+  FROM_EMAIL:       "info@aeroreclaim.com",
   NOTIFICATION_EMAIL: "ptusquets@gmail.com",
   SCORE_ACCEPT:     70,
   SCORE_REVIEW:     40,
@@ -188,11 +189,11 @@ function onLeadInserted(e) {
     
   } catch(error) {
     Logger.log("❌ Error en scoring: " + error.toString());
-    MailApp.sendEmail(
+    GmailApp.sendEmail(
       LEGAL_CONFIG.ADMIN_EMAIL,
       "⚠️ Error Agente 2 AeroReclaim",
       "Lead: " + lead.email + "\nError: " + error.toString() + "\nStack: " + error.stack
-    );
+    , { from: LEGAL_CONFIG.FROM_EMAIL });
     // Marcar para revisión manual
     leadsSheet.getRange(lastRow, LEGAL_CONFIG.COL.ESTADO).setValue("ERROR");
   }
@@ -609,7 +610,7 @@ function writeReviewQueue(ss, lead, result) {
 // ═══════════════════════════════════════════════════════════════
 
 function sendAcceptanceNotification(lead, result) {
-  MailApp.sendEmail(
+  GmailApp.sendEmail(
     LEGAL_CONFIG.NOTIFICATION_EMAIL,
     "✅ Nuevo caso ACEPTADO — " + result.casoId,
     "Caso aceptado automáticamente.\n\n" +
@@ -618,11 +619,11 @@ function sendAcceptanceNotification(lead, result) {
     "Aerolínea: " + lead.aerolinea + "\nCompensación: " + result.compensacion + "€\n" +
     "Score: " + result.scoreTotal + "/100\nCaso ID: " + result.casoId + "\n\n" +
     "El caso está en la cola de Onboarding."
-  );
+  , { from: LEGAL_CONFIG.FROM_EMAIL });
 }
 
 function sendReviewNotification(lead, result) {
-  MailApp.sendEmail(
+  GmailApp.sendEmail(
     LEGAL_CONFIG.NOTIFICATION_EMAIL,
     "🔍 Caso para REVISIÓN — " + result.casoId,
     "Caso requiere revisión manual.\n\n" +
@@ -630,12 +631,12 @@ function sendReviewNotification(lead, result) {
     "Vuelo: " + lead.vuelo + " (" + lead.fechaVuelo + ")\n" +
     "Aerolínea: " + lead.aerolinea + "\nScore: " + result.scoreTotal + "/100\n" +
     "Motivo: " + result.motivo + "\nCaso ID: " + result.casoId
-  );
+  , { from: LEGAL_CONFIG.FROM_EMAIL });
 }
 
 function sendRejectionEmail(lead, result) {
   if (lead.email && lead.email.indexOf("@") > 0 && lead.email.indexOf("test") < 0) {
-    MailApp.sendEmail({
+    GmailApp.sendEmail({
       to: lead.email,
       subject: "AeroReclaim — Resultado de tu consulta",
       htmlBody: 
@@ -650,15 +651,15 @@ function sendRejectionEmail(lead, result) {
         "<li>Si la rechazan, puedes acudir a la <a href='https://www.seguridadaerea.gob.es/es/ambitos/los-derechos-de-los-pasajeros-aereos/reclamaciones'>AESA</a> (gratuito pero lento)</li>" +
         "</ul><p>Si tu situación cambia o tienes otro vuelo afectado, no dudes en volver a consultarnos en <a href='https://aeroreclaim.com'>aeroreclaim.com</a>.</p>" +
         "<p>Un saludo,<br>El equipo de AeroReclaim</p>"
-    });
+    }, { from: LEGAL_CONFIG.FROM_EMAIL });
   }
-  MailApp.sendEmail(
+  GmailApp.sendEmail(
     LEGAL_CONFIG.NOTIFICATION_EMAIL,
     "❌ Caso RECHAZADO — " + result.casoId,
     "Caso rechazado automáticamente.\n\n" +
     "Pasajero: " + lead.nombre + " (" + lead.email + ")\n" +
     "Vuelo: " + lead.vuelo + "\nScore: " + result.scoreTotal + "/100\nMotivo: " + result.motivo
-  );
+  , { from: LEGAL_CONFIG.FROM_EMAIL });
 }
 
 
@@ -871,10 +872,10 @@ function scorePendingLeads() {
       leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.ESTADO).setValue('PENDING_MANUAL');
       leadsSheet.getRange(actualRow, LEGAL_CONFIG.COL.SCORED).setValue('PENDING_MANUAL');
       Logger.log('[scorePendingLeads] Dead-letter: ' + lead.email + ' tras ' + retryCount + ' reintentos → PENDING_MANUAL');
-      MailApp.sendEmail(LEGAL_CONFIG.ADMIN_EMAIL,
+      GmailApp.sendEmail(LEGAL_CONFIG.ADMIN_EMAIL,
         '⚠️ Lead requiere revisión manual — AeroReclaim',
         'Lead ' + lead.email + ' (vuelo ' + lead.vuelo + ') no pudo ser scored tras ' +
-        retryCount + ' intentos.\nFila: ' + actualRow + '\nActuar en el Sheet manualmente.');
+        retryCount + ' intentos.\nFila: ' + actualRow + '\nActuar en el Sheet manualmente.', { from: LEGAL_CONFIG.FROM_EMAIL });
       continue;
     }
 
@@ -901,9 +902,9 @@ function scorePendingLeads() {
   var elapsed = Math.round((Date.now() - startTime) / 1000);
   Logger.log('[scorePendingLeads] Batch completado: ' + processed + ' procesados, ' + errors + ' errores, ' + elapsed + 's.');
   if (errors > 2) {
-    MailApp.sendEmail(LEGAL_CONFIG.ADMIN_EMAIL,
+    GmailApp.sendEmail(LEGAL_CONFIG.ADMIN_EMAIL,
       '⚠️ AeroReclaim: ' + errors + ' errores en scorePendingLeads',
       'El batch de scoring tuvo ' + errors + ' errores en ' + elapsed + 's.\n' +
-      'Revisar Leads Sheet → filas con RETRY_N en col K.');
+      'Revisar Leads Sheet → filas con RETRY_N en col K.', { from: LEGAL_CONFIG.FROM_EMAIL });
   }
 }

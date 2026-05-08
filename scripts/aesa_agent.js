@@ -1083,6 +1083,7 @@ function sendDossierAlert_(caseData, eligibility, dossier) {
     subject,
     plainText,
     {
+        from: 'info@aeroreclaim.com',
       name:      'AeroReclaim Agent 5 (AESA)',
       htmlBody:  htmlBody,
       replyTo:   AESA_CONFIG.AERORECLAIM_EMAIL
@@ -1117,7 +1118,8 @@ function notifyPassengerPresented_(row, cols) {
     'Plazo estimado de resolución: 90-180 días (puede extenderse por volumen de reclamaciones).\n\n' +
     'Te informaremos de cada novedad. No necesitas hacer nada.\n\n' +
     'Ref.: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
+    {
+        from: 'info@aeroreclaim.com', name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
   );
 }
 
@@ -1146,7 +1148,8 @@ function notifyPassengerFavorableDecision_(row, cols, complianceDeadline) {
     'y podemos iniciar ejecución judicial directa usando la resolución AESA.\n\n' +
     'Nos pondremos en contacto contigo en cuanto confirmemos el cobro.\n\n' +
     'Ref.: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
+    {
+        from: 'info@aeroreclaim.com', name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
   );
 }
 
@@ -1174,7 +1177,8 @@ function notifyPassengerUnfavorableDecision_(row, cols, decType) {
         'tribunales (la resolución AESA sirve como prueba de la incidencia).\n\n' +
         'Ponte en contacto con nosotros si quieres valorar la vía judicial.') +
     '\n\nRef.: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
+    {
+        from: 'info@aeroreclaim.com', name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
   );
 }
 
@@ -1195,7 +1199,8 @@ function notifyPassengerPaymentConfirmed_(row, cols) {
     'Compensación: ' + comp + '€\n\n' +
     'Gracias por confiar en AeroReclaim. Tu caso queda cerrado con éxito.\n\n' +
     'Ref.: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
+    {
+        from: 'info@aeroreclaim.com', name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
   );
 }
 
@@ -1221,7 +1226,8 @@ function notifyPassengerNonCompliance_(row, cols) {
     'de hasta 250.000€ para la aerolínea.\n\n' +
     'Por favor responde a este email para coordinar el siguiente paso.\n\n' +
     'Ref.: ' + caseId + '\n\nAtentamente,\nAeroReclaim Solutions',
-    { name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
+    {
+        from: 'info@aeroreclaim.com', name: AESA_CONFIG.AERORECLAIM_NAME, replyTo: AESA_CONFIG.AERORECLAIM_EMAIL }
   );
 }
 
@@ -1449,7 +1455,8 @@ function sendInternalAlertAESA_(ss, caseId, message) {
       '[AeroReclaim Agent 5] Alerta — Exp. ' + caseId,
       'Expediente: ' + caseId + '\n\n' + message + '\n\n' +
       'Generado automáticamente por Agent 5 (AESA) — ' + new Date().toISOString(),
-      { name: 'AeroReclaim Agent 5 (AESA)' }
+      {
+        from: 'info@aeroreclaim.com', name: 'AeroReclaim Agent 5 (AESA)' }
     );
     if (ss) logActionAESA_(ss, caseId, 'ALERT_SENT', message.substring(0, 150));
   } catch (e) {
