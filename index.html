@@ -54,7 +54,7 @@
 <link rel="stylesheet" href="./validator.css">
 
 <!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-N4NDPFXP6N"></script>
+<script src="/consent.js"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -73,13 +73,8 @@
     "url": "https://aeroreclaim.com",
     "areaServed": {"@type": "Country", "name": "ES"},
     "serviceType": "Reclamación de compensación de vuelos",
-    "priceRange": "Sin coste inicial - 25% de la compensación obtenida",
-    "knowsAbout": ["CE 261/2004", "Compensación por vuelo retrasado", "Compensación por vuelo cancelado", "Overbooking"],
-    "creator": {
-      "@type": "SoftwareApplication",
-      "name": "Perplexity Computer",
-      "url": "https://www.perplexity.ai/computer"
-    }
+    "priceRange": "Sin coste inicial - 25% + IVA de la compensación obtenida",
+    "knowsAbout": ["CE 261/2004", "Compensación por vuelo retrasado", "Compensación por vuelo cancelado", "Overbooking"]
   },
   {
     "@context": "https://schema.org",
@@ -160,7 +155,7 @@
       <ul class="nav__list" role="list">
         <li><a href="#como-funciona" class="nav__link">Cómo funciona</a></li>
         <li><a href="#compensaciones" class="nav__link">Compensaciones</a></li>
-        <li><a href="#opiniones" class="nav__link">Opiniones</a></li>
+        <li><a href="#opiniones" class="nav__link">Compromisos</a></li>
         <li><a href="#faq" class="nav__link">FAQ</a></li>
         <li><a href="./blog/" class="nav__link">Blog</a></li>
       </ul>
@@ -182,7 +177,7 @@
     <ul class="mobile-menu__list" role="list">
       <li><a href="#como-funciona" class="mobile-menu__link">Cómo funciona</a></li>
       <li><a href="#compensaciones" class="mobile-menu__link">Compensaciones</a></li>
-      <li><a href="#opiniones" class="mobile-menu__link">Opiniones</a></li>
+      <li><a href="#opiniones" class="mobile-menu__link">Compromisos</a></li>
       <li><a href="#faq" class="mobile-menu__link">FAQ</a></li>
       <li><a href="./blog/" class="mobile-menu__link">Blog</a></li>
       <li><a href="#hero" class="btn btn--primary mobile-menu__cta">Comprobar mi vuelo</a></li>
@@ -214,7 +209,7 @@
       </div>
       <div class="trust-badge" style="background:var(--color-success-highlight);border:1.5px solid var(--color-success);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);font-size:var(--text-sm);">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-success-active)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-        <span><strong>Si no ganamos, pagas 0€.</strong> Solo cobramos el 25% cuando la aerolínea paga.</span>
+        <span><strong>Si no ganamos, pagas 0€.</strong> Solo cobramos el 25% + IVA cuando la aerolínea paga.</span>
       </div>
 
       <!-- CALCULADORA RÁPIDA AER-121 -->
@@ -483,7 +478,7 @@
         </div>
         <div class="comp-card__distance">1.500 — 3.500 km</div>
         <div class="comp-card__amount">400€</div>
-        <div class="comp-card__example">Ej: Madrid — Londres</div>
+        <div class="comp-card__example">Ej: Madrid — Tenerife</div>
         <div class="comp-card__bar" style="--bar-width: 67%"></div>
       </div>
 
@@ -544,15 +539,15 @@
         <div class="why-card__icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="1.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <h3 class="why-card__title">Solo 25% de comisión</h3>
-        <p class="why-card__desc">La comisión más competitiva del mercado. Tú recibes más.</p>
+        <h3 class="why-card__title">25% + IVA, solo si cobras</h3>
+        <p class="why-card__desc">30,25 % en total, IVA incluido, y solo sobre lo que recuperemos. Si no cobras, no pagas nada.</p>
       </div>
       <div class="why-card animate-on-scroll">
         <div class="why-card__icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
         </div>
-        <h3 class="why-card__title">100% automatizado</h3>
-        <p class="why-card__desc">IA de última generación gestiona todo el proceso por ti.</p>
+        <h3 class="why-card__title">Una persona detrás de tu caso</h3>
+        <p class="why-card__desc">La tecnología agiliza el papeleo, pero cada reclamación la revisa una persona, y hablas directamente con ella.</p>
       </div>
       <div class="why-card animate-on-scroll">
         <div class="why-card__icon">
@@ -563,42 +558,6 @@
       </div>
     </div>
 
-    <!-- Comparison table -->
-    <div class="comparison animate-on-scroll">
-      <h3 class="comparison__title">Comparativa de comisiones</h3>
-      <div class="comparison__table-wrap">
-        <table class="comparison__table">
-          <thead>
-            <tr>
-              <th>Servicio</th>
-              <th>Comisión</th>
-              <th>Automatización</th>
-              <th>Tiempo medio</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="comparison__row--highlight">
-              <td><strong>AeroReclaim</strong></td>
-              <td><span class="badge badge--success">25%</span></td>
-              <td>100% IA</td>
-              <td>2-8 semanas</td>
-            </tr>
-            <tr>
-              <td>AirHelp</td>
-              <td><span class="badge badge--neutral">35%</span></td>
-              <td>Semi-manual</td>
-              <td>4-12 semanas</td>
-            </tr>
-            <tr>
-              <td>Reclamador</td>
-              <td><span class="badge badge--neutral">25%</span></td>
-              <td>Manual</td>
-              <td>6-16 semanas</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -606,64 +565,24 @@
 <section class="section section--surface" id="opiniones">
   <div class="container">
     <div class="section__header">
-      <span class="section__overline">Casos gestionados</span>
-      <h2 class="section__title">Experiencias de nuestros clientes</h2>
-      <p class="section__subtitle" style="font-size:0.8rem;color:#6b7280;margin-top:0.5rem;max-width:100%;white-space:normal;">Casos representativos. Nombres modificados para preservar la privacidad.</p>
+      <span class="section__overline">Nuestros compromisos</span>
+      <h2 class="section__title">Cómo trabajamos contigo</h2>
     </div>
 
     <div class="testimonials">
       <div class="testimonial animate-on-scroll">
-        <div class="testimonial__stars" aria-label="5 de 5 estrellas">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <blockquote class="testimonial__quote">"Reclamé 400€ por un vuelo retrasado a Londres. AeroReclaim se encargó de todo en 3 semanas."</blockquote>
-        <div class="testimonial__author">
-          <div class="testimonial__avatar">MG</div>
-          <div>
-            <div class="testimonial__name">María G.</div>
-            <div class="testimonial__location">Madrid</div>
-          </div>
-        </div>
+        <h3 class="why-card__title">Te decimos la verdad sobre tu caso</h3>
+        <p class="testimonial__quote" style="font-style:normal">Si tu vuelo no tiene derecho a compensación, te lo explicamos y no seguimos adelante. Mirarlo no te cuesta nada.</p>
       </div>
 
       <div class="testimonial animate-on-scroll">
-        <div class="testimonial__stars" aria-label="5 de 5 estrellas">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <blockquote class="testimonial__quote">"Mi vuelo a Nueva York fue cancelado. Recibí 600€ de compensación sin mover un dedo."</blockquote>
-        <div class="testimonial__author">
-          <div class="testimonial__avatar">CR</div>
-          <div>
-            <div class="testimonial__name">Carlos R.</div>
-            <div class="testimonial__location">Barcelona</div>
-          </div>
-        </div>
+        <h3 class="why-card__title">No nos rendimos al primer “no”</h3>
+        <p class="testimonial__quote" style="font-style:normal">Reclamamos por escrito, insistimos con burofax y, si la aerolínea no paga, te acompañamos para llevarlo al juzgado sin abogado ni costes para ti.</p>
       </div>
 
       <div class="testimonial animate-on-scroll">
-        <div class="testimonial__stars" aria-label="5 de 5 estrellas">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <blockquote class="testimonial__quote">"Increíble lo fácil que fue. Introduje mi vuelo, y en un mes tenía los 250€ en mi cuenta."</blockquote>
-        <div class="testimonial__author">
-          <div class="testimonial__avatar">AP</div>
-          <div>
-            <div class="testimonial__name">Ana P.</div>
-            <div class="testimonial__location">Valencia</div>
-          </div>
-        </div>
+        <h3 class="why-card__title">Tu dinero, sin sorpresas</h3>
+        <p class="testimonial__quote" style="font-style:normal">Solo cobramos el 25% + IVA de lo que recuperemos. Te enviamos la factura y te transferimos el resto. Puedes reclamar vuelos de hasta 5 años atrás.</p>
       </div>
     </div>
   </div>
@@ -704,7 +623,7 @@
           <svg class="faq-item__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="faq-item__answer">
-          <p>Actualmente trabajamos con <strong>Vueling, Ryanair, Air Europa e Iberia Express</strong>. Seguimos ampliando el catálogo. Si tu aerolínea no aparece en el validador, escríbenos a info@aeroreclaim.com y te decimos si podemos ayudarte.</p>
+          <p>Reclamamos a cualquier aerolínea cuando el vuelo está cubierto por el Reglamento europeo: Iberia, Vueling, Air Europa, Ryanair, Lufthansa, Saudia o Tunisair, entre otras. Si tienes dudas, escríbenos a info@aeroreclaim.com y te decimos si podemos ayudarte.</p>
         </div>
       </details>
 
@@ -877,7 +796,7 @@
         <ul role="list">
           <li><a href="#como-funciona" class="footer__link">Cómo funciona</a></li>
           <li><a href="#compensaciones" class="footer__link">Compensaciones</a></li>
-          <li><a href="#opiniones" class="footer__link">Opiniones</a></li>
+          <li><a href="#opiniones" class="footer__link">Compromisos</a></li>
           <li><a href="#faq" class="footer__link">FAQ</a></li>
           <li><a href="./blog/" class="footer__link">Blog</a></li>
           <li><a href="./nosotros.html" class="footer__link">Nosotros</a></li>
