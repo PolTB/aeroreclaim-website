@@ -407,8 +407,6 @@
   letter-spacing: -0.02em;
   max-width: 22ch;
 }
-.footer__inline-link { color: var(--color-text-muted); }
-.footer__inline-link:hover { color: var(--color-text); }
 .h-pass__meta dd { white-space: nowrap; }
 @media (max-width: 420px) {
   .h-pass__main { padding: var(--space-5) var(--space-5) var(--space-4); }

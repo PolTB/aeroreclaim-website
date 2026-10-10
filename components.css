@@ -952,3 +952,13 @@
   .nav__container .logo__img { height: 28px; }
   .nav__actions .btn:not(.btn--primary) { display: none; }
 }
+
+/* Enlaces de contacto dentro del texto del pie */
+.footer__inline-link {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.footer__inline-link:hover {
+  color: var(--color-primary);
+}
