@@ -10,7 +10,8 @@ Reclamaciones CE 261/2004 España. Modelo no win, no fee. Comisión: 25% + IVA.
 - HTML5 estático + CSS (sin framework)
 - GitHub Pages (rama `main` → deploy automático)
 - Google Analytics GA4: `G-N4NDPFXP6N`
-- Google Fonts: Inter + Plus Jakarta Sans
+- Google Fonts: Schibsted Grotesk (todo el texto) + IBM Plex Mono (datos: vuelos, códigos)
+- Marca (10/2026): logo = billete partido con "AR" (`assets/logo.svg`, `assets/favicon.svg`); navy #14224A, azul de acción #2563EB, verde #0E8A5F solo para importes. Imagen para compartir: `assets/og-image.png`. Toda página con formulario de vuelo carga `/flight-data.js` y `/validator.js` antes de `app.js`, y `/validator.css`.
 
 ## Estructura de archivos
 ```
@@ -36,13 +37,13 @@ app.js              → lógica principal (pre-validador, leads)
 - SIEMPRE copiar el header y footer EXACTOS de blog/derechos-pasajero-semana-santa-2026/index.html
 
 1. Siempre incluir `<script src="../../app.js" defer></script>` justo antes de `</body>` — sin este script el layout no funciona.
-2. Incluir botón theme-toggle en el header (igual que en derechos-pasajero-semana-santa-2026/index.html).
+2. NO hay botón de modo oscuro: la web tiene un único tema claro desde la revisión de marca de 10/2026. El logo va como `<img class="logo__img" src="/assets/logo.svg" alt="AeroReclaim" width="173" height="34">` (nunca un SVG pegado en línea).
 
 ## Reglas CSS OBLIGATORIAS
 1. Todos los artículos de blog DEBEN tener `<html lang="es" data-theme="light">` — sin este atributo el layout se rompe.
 2. Orden de CSS en artículos de blog (siempre en este orden):
    ```html
-   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
    <link rel="stylesheet" href="../../base.css">
    <link rel="stylesheet" href="../../style.css">
    <link rel="stylesheet" href="../../components.css">

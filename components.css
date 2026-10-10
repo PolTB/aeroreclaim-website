@@ -33,14 +33,10 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: transparent;
-  transition: background 300ms cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-divider);
 }
 .header--scrolled {
-  background: oklch(from var(--color-bg) l c h / 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   box-shadow: var(--shadow-sm);
 }
 .header__inner {
@@ -56,11 +52,11 @@
   align-items: center;
   gap: var(--space-3);
 }
-.header__cta {
+.header__actions .header__cta {
   display: none;
 }
-@media (min-width: 768px) {
-  .header__cta { display: inline-flex; }
+@media (min-width: 600px) {
+  .header__actions .header__cta { display: inline-flex; }
 }
 
 /* Logo */
@@ -70,6 +66,14 @@
   gap: var(--space-2);
   text-decoration: none;
   color: var(--color-text);
+}
+.logo__img {
+  display: block;
+  height: 34px;
+  width: auto;
+}
+.logo--footer .logo__img {
+  height: 28px;
 }
 .logo__text {
   font-family: var(--font-display);
@@ -100,23 +104,6 @@
   color: var(--color-text);
 }
 
-/* Theme toggle */
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  background: var(--color-surface-2);
-  border: 1px solid oklch(from var(--color-text) l c h / 0.08);
-  color: var(--color-text-muted);
-  transition: all var(--transition-interactive);
-}
-.theme-toggle:hover {
-  color: var(--color-text);
-  background: var(--color-surface-offset);
-}
 
 /* Hamburger */
 .hamburger {
@@ -190,7 +177,7 @@
   text-decoration: none;
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-5);
-  transition: all var(--transition-interactive);
+  transition: background-color var(--transition-interactive), color var(--transition-interactive);
   border: none;
   cursor: pointer;
   white-space: nowrap;
@@ -201,12 +188,9 @@
 }
 .btn--primary:hover {
   background: var(--color-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px oklch(from var(--color-primary) l c h / 0.3);
 }
 .btn--primary:active {
   background: var(--color-primary-active);
-  transform: translateY(0);
 }
 .btn--secondary {
   background: var(--color-surface-offset);
@@ -241,6 +225,7 @@
   z-index: -1;
 }
 .hero__pattern {
+  display: none;
   position: absolute;
   inset: 0;
   background:
@@ -303,8 +288,6 @@
   font-weight: 600;
   color: var(--color-text-muted);
   margin-bottom: var(--space-1);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 .form-label--light {
   color: oklch(1 0 0 / 0.7);
@@ -430,11 +413,11 @@
 }
 .section__overline {
   display: block;
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-primary);
-  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  font-weight: 500;
   margin-bottom: var(--space-2);
 }
 .section__title {
@@ -523,10 +506,7 @@
   text-align: center;
   transition: all var(--transition-interactive);
 }
-.comp-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
+
 .comp-card--featured {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary);
@@ -586,7 +566,7 @@
   top: 0;
   height: 100%;
   width: var(--bar-width, 50%);
-  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  background: var(--color-primary);
   border-radius: var(--radius-full);
 }
 
@@ -614,10 +594,6 @@
   background: var(--color-surface);
   border: 1px solid oklch(from var(--color-text) l c h / 0.06);
   transition: all var(--transition-interactive);
-}
-.why-card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: oklch(from var(--color-primary) l c h / 0.2);
 }
 .why-card__icon {
   margin-bottom: var(--space-4);
@@ -710,9 +686,7 @@
   padding: var(--space-6);
   transition: all var(--transition-interactive);
 }
-.testimonial:hover {
-  box-shadow: var(--shadow-md);
-}
+
 .testimonial__stars {
   display: flex;
   gap: 2px;
@@ -808,6 +782,7 @@
   overflow: hidden;
 }
 .cta-section__bg {
+  display: none;
   position: absolute;
   inset: 0;
   background:
@@ -926,8 +901,7 @@
 
 /* ===== SCROLL ANIMATIONS ===== */
 .animate-on-scroll {
-  opacity: 0;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
 }
 .animate-on-scroll.visible {
   opacity: 1;
@@ -938,4 +912,43 @@
   .animate-on-scroll {
     opacity: 1;
   }
+}
+/* Icono dentro del campo de vuelo (rutas y aerolíneas) */
+.input-wrapper > svg {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-faint);
+  pointer-events: none;
+}
+.input-wrapper > svg + .form-input {
+  padding-left: var(--space-10);
+}
+
+/* Miga de pan bajo la cabecera fija (rutas y aerolíneas) */
+#main > .container:first-child > .breadcrumb {
+  padding-top: calc(68px + var(--space-4));
+}
+
+/* Cabecera de las landings de aerolínea (vueling/, ryanair/, aireuropa/) */
+.nav:has(> .nav__container) {
+  display: block;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-divider);
+}
+.nav__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: var(--content-wide);
+  margin-inline: auto;
+  padding: var(--space-3) var(--space-4);
+}
+.nav__logo { display: flex; align-items: center; }
+.nav__actions { display: flex; align-items: center; gap: var(--space-2); }
+@media (max-width: 520px) {
+  .nav__container .logo__img { height: 28px; }
+  .nav__actions .btn:not(.btn--primary) { display: none; }
 }
