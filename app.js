@@ -28,6 +28,12 @@
       try { sessionStorage.setItem('aeroreclaim_utm', JSON.stringify(utmData)); } catch(e) {}
     }
 
+    // 2b. Clic en un anuncio de Google Ads (autoetiquetado: gclid, o gbraid/wbraid en iOS).
+    //     Solo se guarda que la visita vino de un anuncio, nunca el identificador del clic.
+    if (params.get('gclid') || params.get('gbraid') || params.get('wbraid')) {
+      try { sessionStorage.setItem('aeroreclaim_gads', '1'); } catch(e) {}
+    }
+
     // 3. Referrer externo: guardar si no hay UTMs y viene de fuera
     if (!src && !medium && document.referrer) {
       var isInternal = document.referrer.indexOf('aeroreclaim.com') >= 0;
@@ -59,7 +65,12 @@
       }
     } catch(e) {}
 
-    // Prioridad 3: referrer externo
+    // Prioridad 3: clic en un anuncio de Google Ads sin UTMs
+    try {
+      if (sessionStorage.getItem('aeroreclaim_gads')) return 'google-ads';
+    } catch(e) {}
+
+    // Prioridad 4: referrer externo
     try {
       var referrer = sessionStorage.getItem('aeroreclaim_referrer');
       if (referrer) {
@@ -470,7 +481,7 @@
       var refParam = new URLSearchParams(window.location.search).get('ref') || '';
       if (!refParam) { try { refParam = sessionStorage.getItem('aeroreclaim_ref') || ''; } catch(e) {} }
 
-      // Construir referral_source completo (UTM > ref > referrer > organic)
+      // Construir referral_source completo (ref > UTM > google-ads > referrer > organic)
       var referralSource = buildReferralSource(refParam);
       var leadData = {
         name: name.value.trim(),
