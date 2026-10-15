@@ -1,4 +1,4 @@
-/* flight-data.js — AeroReclaim Pre-Validador AI
+/* flight-data.js | AeroReclaim Pre-Validador AI
    Base de datos de aerolíneas y aeropuertos para validación CE 261/2004 */
 
 var AERORECLAIM = AERORECLAIM || {};

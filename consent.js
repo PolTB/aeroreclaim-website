@@ -1,4 +1,4 @@
-/* Consentimiento de cookies — AeroReclaim (octubre 2026)
+/* Consentimiento de cookies | AeroReclaim (octubre 2026)
  * Google Analytics (y la medición de Google Ads) solo se carga si el visitante acepta.
  * Modo de consentimiento v2 de Google: todo empieza denegado y solo se concede al aceptar. Hasta entonces, las
  * llamadas a gtag() de la web se quedan en cola en dataLayer y no salen del

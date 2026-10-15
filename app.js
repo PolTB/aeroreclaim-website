@@ -1,4 +1,4 @@
-/* app.js — AeroReclaim — Pre-Validador AI */
+/* app.js | AeroReclaim | Pre-Validador AI */
 
 (function() {
   'use strict';
@@ -574,7 +574,7 @@
     var form = document.getElementById(formId);
     if (!form) return;
 
-    // Funnel: form_start — fire once on first interaction
+    // Funnel: form_start, fire once on first interaction
     var formStartFired = false;
     form.addEventListener('focusin', function() {
       if (!formStartFired) {

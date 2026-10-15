@@ -1,4 +1,4 @@
-/* validator.js — AeroReclaim Pre-Validador AI
+/* validator.js | AeroReclaim Pre-Validador AI
    Motor de validación CE 261/2004 client-side */
 
 var AERORECLAIM = AERORECLAIM || {};
