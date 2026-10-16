@@ -347,7 +347,7 @@
       }
       emailInput.style.borderColor = '';
       if (typeof gtag === 'function') {
-        gtag('event', 'ineligible_email_capture', { email: emailVal });
+        gtag('event', 'ineligible_email_capture');
       }
       try {
         fetch(LEAD_API, {
@@ -402,6 +402,11 @@
           '<div class="form-group">' +
             '<label for="lead-email" class="form-label">Email</label>' +
             '<input type="email" id="lead-email" class="form-input" placeholder="tu@email.com" required autocomplete="email">' +
+            '<span class="form-error" aria-live="polite"></span>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label for="lead-phone" class="form-label">Móvil (opcional, por si prefieres WhatsApp)</label>' +
+            '<input type="tel" id="lead-phone" class="form-input" placeholder="600 000 000" autocomplete="tel" inputmode="tel">' +
             '<span class="form-error" aria-live="polite"></span>' +
           '</div>' +
           '<div class="form-group">' +
@@ -468,6 +473,20 @@
         valid = false;
       }
 
+      // Móvil opcional: solo dígitos (y + al principio), entre 9 y 15 cifras
+      var phone = document.getElementById('lead-phone');
+      var phoneVal = phone ? phone.value.replace(/[\s().-]/g, '') : '';
+      if (phoneVal && !/^\+?\d{9,15}$/.test(phoneVal)) {
+        phone.style.borderColor = 'var(--color-error)';
+        var perr = phone.closest('.form-group').querySelector('.form-error');
+        if (perr) perr.textContent = 'Revisa el número (o déjalo en blanco)';
+        valid = false;
+      } else if (phone) {
+        phone.style.borderColor = '';
+        var perr2 = phone.closest('.form-group').querySelector('.form-error');
+        if (perr2) perr2.textContent = '';
+      }
+
       if (!consent.checked) {
         consent.closest('.v-lead__checkbox').style.color = 'var(--color-error)';
         valid = false;
@@ -483,6 +502,9 @@
 
       // Construir referral_source completo (ref > UTM > google-ads > referrer > organic)
       var referralSource = buildReferralSource(refParam);
+      // El receptor del formulario no tiene columna de teléfono: viaja en referral_source,
+      // separado por " | tel:" (lo lee el Motor diario en la línea "Origen:" del aviso).
+      var referralWithPhone = phoneVal ? referralSource + ' | tel:' + phoneVal : referralSource;
       var leadData = {
         name: name.value.trim(),
         email: email.value.trim(),
@@ -509,7 +531,7 @@
         'airline_name=' + encodeURIComponent(leadData.airline),
         'incident_type=' + encodeURIComponent(issueMap[leadData.issue] || leadData.issue),
         'estimated_compensation=' + encodeURIComponent(leadData.compensation_est + '€'),
-        'referral_source=' + encodeURIComponent(referralSource)
+        'referral_source=' + encodeURIComponent(referralWithPhone)
       ].join('&');
       try {
         fetch(LEAD_API, {
