@@ -581,9 +581,9 @@
         '<div class="v-success__next">' +
           '<h4>Qué pasa ahora</h4>' +
           '<ol>' +
-            '<li>Te llega un email de info@aeroreclaim.com a <strong>' + data.email + '</strong>. Si no lo ves, mira en spam.</li>' +
-            '<li>Una persona revisa los datos de tu vuelo.</li>' +
-            '<li>Te contestamos en 24-48 h laborables con lo que necesitamos para reclamar.</li>' +
+            '<li>En unos minutos te llega un correo de Pol desde info@aeroreclaim.com a <strong>' + data.email + '</strong>. Si no lo ves, mira en spam o en promociones.</li>' +
+            '<li>Si tu caso está claro, ese correo ya te dice cuánto te corresponde. Si hay algo que revisar, te escribo en cuanto lo tenga revisado, normalmente en un día laborable.</li>' +
+            '<li>Para empezar solo tendrás que responder con la palabra ACEPTO.</li>' +
           '</ol>' +
         '</div>' +
         closeButton('Entendido', 'btn--primary') +
