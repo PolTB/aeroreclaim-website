@@ -14,6 +14,16 @@
     var ref = params.get('ref');
     if (ref) {
       try { sessionStorage.setItem('aeroreclaim_ref', ref); } catch(e) {}
+      // Contador de visitas por agencia (gas/visitas-agencias en el repo del CEO): solo el código
+      // y el día, sin cookies ni datos personales. Una vez por sesión y código, no por cada página.
+      var contada = false;
+      try { contada = sessionStorage.getItem('aeroreclaim_ref_contada') === ref; } catch(e) {}
+      if (!contada) {
+        try {
+          fetch('https://script.google.com/macros/s/AKfycbw936kOh6PlHXBsD5gKF4I27TcrfDzWKGZHwcKTvJ3rWYFzqx0sqG8qz0rj02HeZKmC7w/exec?v=' + encodeURIComponent(ref.toLowerCase()), { mode: 'no-cors' });
+          sessionStorage.setItem('aeroreclaim_ref_contada', ref);
+        } catch(e) {}
+      }
     }
 
     // 2. UTMs: capturar en una sola clave JSON si vienen en la URL
