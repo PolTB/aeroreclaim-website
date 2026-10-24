@@ -32,9 +32,9 @@ var AERORECLAIM = AERORECLAIM || {};
 
   // ===== PARSE FLIGHT NUMBER =====
   function parseFlightNumber(raw) {
-    var cleaned = raw.trim().toUpperCase().replace(/\s+/g, '');
-    // Match: 2 letters + 1-4 digits
-    var match = cleaned.match(/^([A-Z]{2})(\d{1,4})$/);
+    var cleaned = raw.trim().toUpperCase().replace(/[\s-]+/g, '');
+    // Código IATA de 2 caracteres (IB, V7, U2, I2, W6) + 1-4 cifras
+    var match = cleaned.match(/^([A-Z]{2}|[A-Z]\d|\d[A-Z])(\d{1,4})$/);
     if (!match) {
       // Try 3-letter code (some airlines like TOM)
       match = cleaned.match(/^([A-Z]{2,3})(\d{1,4})$/);

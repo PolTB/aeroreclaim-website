@@ -627,8 +627,9 @@
 
       // Flight number validation
       if (flightInput) {
-        var flightVal = flightInput.value.trim().toUpperCase();
-        var flightPattern = /^[A-Z]{2}\d{1,4}$/;
+        // Sin espacios ni guiones ("VY 8715") y con códigos de cifra (V7, U2, I2, W6)
+        var flightVal = flightInput.value.trim().toUpperCase().replace(/[\s-]/g, '');
+        var flightPattern = /^([A-Z]{2}|[A-Z]\d|\d[A-Z])\d{1,4}$/;
         var errorEl = flightInput.closest('.form-group') ? flightInput.closest('.form-group').querySelector('.form-error') : null;
 
         if (!flightVal) {
@@ -637,7 +638,8 @@
           valid = false;
         } else if (!flightPattern.test(flightVal)) {
           flightInput.style.borderColor = 'var(--color-error)';
-          if (errorEl) errorEl.textContent = 'Formato: 2 letras + número (ej: IB3456)';
+          if (errorEl) errorEl.textContent = 'Escríbelo como en la tarjeta de embarque, por ejemplo IB3456 o V71234';
+          if (typeof gtag === 'function') gtag('event', 'validador_error_formato', { form_id: formId });
           valid = false;
         } else {
           flightInput.style.borderColor = '';
