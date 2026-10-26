@@ -38,15 +38,17 @@
     b.id = 'ar-cookies';
     b.setAttribute('role', 'dialog');
     b.setAttribute('aria-label', 'Preferencias de cookies');
-    b.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:560px;margin:0 auto;' +
+    // Compacto (26/10/2026): el anterior medía 215 px en el móvil y tapaba el formulario de la portada.
+    // Rechazar y Aceptar con el mismo peso visual.
+    b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:560px;margin:0 auto;' +
       'background:#fff;color:#14224A;border:1px solid #E3E8F1;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);' +
-      'padding:16px;font:14px/1.5 Inter,system-ui,sans-serif';
+      'padding:10px 12px;font:13px/1.4 Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap;align-items:center;gap:8px';
     b.innerHTML =
-      '<p style="margin:0 0 12px">Usamos cookies de análisis y de medición publicitaria (Google Analytics y Google Ads) para saber cómo se usa la web y qué anuncios funcionan. No las usamos para mostrarte publicidad personalizada. ' +
-      'Solo se activan si aceptas. <a href="/politica-cookies.html" style="color:#14224A">Más información</a></p>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-      '<button type="button" data-v="no" style="flex:1;min-width:120px;padding:10px;border-radius:8px;border:1px solid #D3DAE6;background:#fff;color:#14224A;font-weight:600;cursor:pointer">Rechazar</button>' +
-      '<button type="button" data-v="si" style="flex:1;min-width:120px;padding:10px;border-radius:8px;border:1px solid #14224A;background:#14224A;color:#fff;font-weight:600;cursor:pointer">Aceptar</button>' +
+      '<p style="margin:0;flex:1 1 260px">Usamos cookies de Google para medir la web y los anuncios, solo si aceptas. Nunca para publicidad personalizada. ' +
+      '<a href="/politica-cookies.html" style="color:#14224A">Más información</a></p>' +
+      '<div style="display:flex;gap:8px;flex:1 1 200px">' +
+      '<button type="button" data-v="no" style="flex:1;padding:8px;border-radius:8px;border:1px solid #14224A;background:#fff;color:#14224A;font-weight:600;cursor:pointer">Rechazar</button>' +
+      '<button type="button" data-v="si" style="flex:1;padding:8px;border-radius:8px;border:1px solid #14224A;background:#14224A;color:#fff;font-weight:600;cursor:pointer">Aceptar</button>' +
       '</div>';
     b.addEventListener('click', function (e) {
       var v = e.target && e.target.getAttribute && e.target.getAttribute('data-v');

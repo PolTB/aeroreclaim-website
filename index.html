@@ -156,19 +156,10 @@
   <div class="container h-hero__grid">
     <div>
       <h1 class="h-hero__title">¿Vuelo retrasado o cancelado? La aerolínea te debe hasta 600&nbsp;€.</h1>
-      <p class="h-hero__lead">Si llegaste más de 3 horas tarde, te cancelaron el vuelo o no te dejaron embarcar, te corresponden entre 250 y 600 € por persona. Lo reclamamos nosotros y <strong>solo cobramos si te pagan.</strong></p>
+      <p class="h-hero__lead">Más de 3 horas de retraso, cancelación u overbooking: de 250 a 600 € por persona. <strong>Solo cobramos si te pagan.</strong></p>
 
       <form class="h-check" id="flight-form" novalidate>
         <span id="validador" aria-hidden="true"></span>
-        <fieldset class="h-check__origin">
-          <legend>¿Desde dónde salió el vuelo?</legend>
-          <div class="h-seg">
-            <input type="radio" name="origen" id="origen-eu" value="eu" checked>
-            <label for="origen-eu">España u otro país de la UE</label>
-            <input type="radio" name="origen" id="origen-noneu" value="noneu">
-            <label for="origen-noneu">De fuera de la UE</label>
-          </div>
-        </fieldset>
         <div class="h-check__row">
           <div class="form-group">
             <label for="flight-number" class="form-label">Número de vuelo</label>
@@ -181,8 +172,13 @@
             <span class="form-error" id="date-error" aria-live="polite"></span>
           </div>
         </div>
+        <details class="h-check__help">
+          <summary>¿No tienes el número a mano?</summary>
+          <p>Está en el email de la reserva o en la tarjeta de embarque. Si no lo encuentras, <a href="https://wa.me/34711511991?text=Hola%2C%20no%20encuentro%20el%20n%C3%BAmero%20de%20mi%20vuelo.%20Volaba%20de%20...%20a%20...%20el%20d%C3%ADa%20...%20con%20..." target="_blank" rel="noopener">escríbenos por WhatsApp</a> con la ruta y la fecha y te ayudamos a encontrarlo.</p>
+        </details>
         <button type="submit" class="btn btn--primary btn--lg btn--full">Ver si puedo reclamar</button>
         <p class="h-check__fine">Vuelos de los últimos 5 años. Te contesta una persona en 24-48 h laborables.</p>
+        <p class="h-check__fine">AeroReclaim es una empresa independiente: no somos ninguna aerolínea ni trabajamos para ellas.</p>
       </form>
     </div>
 
@@ -452,7 +448,7 @@
         <a href="/" class="logo logo--footer" aria-label="AeroReclaim">
           <img class="logo__img" src="/assets/logo.svg" alt="AeroReclaim" width="142" height="28">
         </a>
-        <p class="footer__desc">Reclamaciones a aerolíneas por retrasos, cancelaciones y overbooking. Te atiende una persona por email o WhatsApp.</p>
+        <p class="footer__desc">AeroReclaim es una empresa independiente: no somos ninguna aerolínea ni trabajamos para ellas. Reclamaciones a aerolíneas por retrasos, cancelaciones y overbooking. Te atiende una persona por email o WhatsApp.</p>
         <p class="footer__desc"><a href="mailto:info@aeroreclaim.com" class="footer__inline-link">info@aeroreclaim.com</a> · <a href="https://wa.me/34711511991" target="_blank" rel="noopener" class="footer__inline-link">WhatsApp 711 511 991</a></p>
         <p class="footer__desc"><a href="https://www.instagram.com/aeroreclames/" target="_blank" rel="noopener noreferrer" class="footer__inline-link">Instagram @aeroreclames</a></p>
       </div>

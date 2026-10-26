@@ -95,7 +95,7 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
 }
-@media (max-width: 480px) {
+@media (max-width: 340px) {
   .h-check__row { grid-template-columns: 1fr; }
 }
 .h-check .form-input {
@@ -412,3 +412,15 @@
   .h-pass__main { padding: var(--space-5) var(--space-5) var(--space-4); }
   .h-pass__meta dd { font-size: 0.8125rem; }
 }
+
+/* Ayuda para quien no tiene el número de vuelo (26/10/2026) */
+.h-check__help {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.h-check__help summary {
+  cursor: pointer;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.h-check__help p { margin-top: var(--space-2); }
