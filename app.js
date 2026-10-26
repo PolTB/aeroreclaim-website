@@ -373,9 +373,10 @@
     });
   }
 
-  // Aerolínea no europea en un formulario sin la pregunta del origen (portada, desde 26/10/2026):
-  // solo cubre la ley si el vuelo salió de la UE, así que lo preguntamos aquí.
-  function renderOriginQuestion(content, onEU) {
+  // Aerolínea no europea o desconocida en un formulario sin la pregunta del origen (portada, desde 26/10/2026):
+  // la ley solo cubre a las no europeas si el vuelo salió de la UE, así que lo preguntamos aquí.
+  // onNonEU: si la aerolínea es desconocida, en vez de descartar se pregunta si es europea.
+  function renderOriginQuestion(content, onEU, onNonEU) {
     content.innerHTML =
       '<div class="v-result">' +
         '<h3 class="v-result__title">¿Desde dónde salió el vuelo?</h3>' +
@@ -391,7 +392,7 @@
     });
     content.querySelector('#origin-noneu').addEventListener('click', function() {
       if (typeof gtag === 'function') gtag('event', 'prefilter_origen_no_eu');
-      renderIneligible(content);
+      if (onNonEU) onNonEU(); else renderIneligible(content);
     });
   }
 
@@ -723,9 +724,10 @@
         }
       }
 
-      if (!originInput && result.status !== 'error' && result.airline && result.airline.isEU === false) {
-        renderOriginQuestion(content, function() {
-          renderResults(modal, result, flightNumber, dateStr);
+      if (!originInput && result.status !== 'error' && result.airline && result.airline.isEU !== true) {
+        var mostrar = function() { renderResults(modal, result, flightNumber, dateStr); };
+        renderOriginQuestion(content, mostrar, result.airline.isEU === false ? null : function() {
+          renderAirlineQuestion(content, mostrar);
         });
         return;
       }
