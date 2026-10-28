@@ -206,7 +206,8 @@
     if (result.status === 'error') {
       html = renderError(result);
     } else {
-      html = renderEligible(result, flightNumber, dateStr);
+      // Resultado y formulario en la misma pantalla (auditoría web 24/10/2026, cambio 5)
+      html = renderEligible(result, flightNumber, dateStr) + leadFormHtml(result, flightNumber, dateStr);
     }
 
     content.innerHTML = html;
@@ -235,22 +236,7 @@
       }
     }
 
-    // Add event listener to CTA
-    var ctaBtn = content.querySelector('#result-cta');
-    if (ctaBtn) {
-      ctaBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (typeof gtag === 'function') {
-          gtag('event', 'mandato_inicio', {
-            flight_number: flightNumber,
-            flight_date: dateStr,
-            airline: result.airline ? result.airline.code : '',
-            compensation_est: result.compensation ? result.compensation.estimated : 0
-          });
-        }
-        showLeadForm(content, result, flightNumber, dateStr);
-      });
-    }
+    if (result.status !== 'error') bindLeadForm(content, result, flightNumber, dateStr);
   }
 
   function renderError(result) {
@@ -321,10 +307,6 @@
       urgencyHtml +
 
       '<p class="v-result__legal">Es una estimación. El importe final depende de la distancia exacta, de cuánto llegaste tarde y de la causa. Lo revisa una persona antes de reclamar nada.</p>' +
-
-      '<button class="btn btn--primary btn--lg btn--full" id="result-cta">Empezar la reclamación' + ARROW + '</button>' +
-
-      '<p class="v-result__reassurance">Solo cobramos si te pagan: 25 % + IVA de lo que recuperemos.</p>' +
     '</div>';
   }
 
@@ -417,14 +399,11 @@
   }
 
   // ===== LEAD CAPTURE FORM =====
-  function showLeadForm(container, result, flightNumber, dateStr) {
+  function leadFormHtml(result, flightNumber, dateStr) {
     var comp = result.compensation;
-    var amountText = comp.min === comp.max ? formatEuros(comp.estimated) : 'entre ' + comp.min + ' y ' + formatEuros(comp.max);
-    container.innerHTML =
-      '<div class="v-lead">' +
+    return '<div class="v-lead v-lead--inline">' +
         '<div class="v-lead__header">' +
-          '<h3 class="v-lead__title">Último paso</h3>' +
-          '<p class="v-lead__subtitle">Déjanos tu nombre y tu email. Revisamos el vuelo ' + flightNumber + ' y te escribimos con los siguientes pasos para reclamar ' + amountText + ' por pasajero.</p>' +
+          '<p class="v-lead__subtitle">Déjanos tu nombre y tu email. Revisamos el vuelo ' + flightNumber + ' y te escribimos con los siguientes pasos.</p>' +
         '</div>' +
         '<form class="v-lead__form" id="lead-form" novalidate>' +
           '<div class="form-group">' +
@@ -443,14 +422,13 @@
             '<span class="form-error" aria-live="polite"></span>' +
           '</div>' +
           '<div class="form-group">' +
-            '<label for="lead-issue" class="form-label">¿Qué pasó con el vuelo?</label>' +
-            '<select id="lead-issue" class="form-input form-input--select" required>' +
-              '<option value="" disabled selected>Elige una opción</option>' +
-              '<option value="delay">Llegó más de 3 horas tarde</option>' +
-              '<option value="cancel">Lo cancelaron</option>' +
-              '<option value="overbook">No me dejaron embarcar (overbooking)</option>' +
-              '<option value="other">Otra cosa</option>' +
-            '</select>' +
+            '<span class="form-label" id="lead-issue-label">¿Qué pasó con el vuelo?</span>' +
+            '<div class="v-issue" role="group" aria-labelledby="lead-issue-label">' +
+              '<button type="button" class="v-issue__btn" data-issue="delay" aria-pressed="false">Retraso</button>' +
+              '<button type="button" class="v-issue__btn" data-issue="cancel" aria-pressed="false">Cancelación</button>' +
+              '<button type="button" class="v-issue__btn" data-issue="overbook" aria-pressed="false">Overbooking</button>' +
+            '</div>' +
+            '<input type="hidden" id="lead-issue" value="">' +
             '<span class="form-error" aria-live="polite"></span>' +
           '</div>' +
           '<div class="v-lead__consent">' +
@@ -458,6 +436,7 @@
               '<input type="checkbox" id="lead-consent" required>' +
               '<span>Acepto la <a href="/politica-privacidad.html" target="_blank">Política de Privacidad</a> y las <a href="/condiciones-servicio.html" target="_blank">Condiciones del Servicio</a></span>' +
             '</label>' +
+            '<span class="form-error" id="lead-consent-error" aria-live="polite"></span>' +
           '</div>' +
           '<button type="submit" class="btn btn--primary btn--lg btn--full">Enviar' + ARROW + '</button>' +
           '<input type="hidden" name="flight" value="' + flightNumber + '">' +
@@ -465,17 +444,41 @@
           '<input type="hidden" name="compensation_est" value="' + comp.estimated + '">' +
           '<input type="hidden" name="airline" value="' + (result.airline ? result.airline.name : '') + '">' +
         '</form>' +
-        '<p class="v-result__reassurance">Enviarlo no te compromete a nada. Solo cobramos si te pagan.</p>' +
+        '<p class="v-result__reassurance">Enviarlo no te compromete a nada. Solo cobramos si te pagan: 25 % + IVA de lo que recuperemos.</p>' +
       '</div>';
+  }
+
+  function bindLeadForm(container, result, flightNumber, dateStr) {
+    var comp = result.compensation;
+    var leadForm = container.querySelector('#lead-form');
+    var issueBtns = leadForm.querySelectorAll('.v-issue__btn');
+    issueBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        issueBtns.forEach(function(b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+        document.getElementById('lead-issue').value = btn.getAttribute('data-issue');
+        btn.closest('.form-group').querySelector('.form-error').textContent = '';
+      });
+    });
+    document.getElementById('lead-consent').addEventListener('change', function() {
+      if (!this.checked) return;
+      this.closest('.v-lead__checkbox').style.color = '';
+      document.getElementById('lead-consent-error').textContent = '';
+    });
 
     // Lead form submission
-    var leadForm = document.getElementById('lead-form');
     var leadFormStartFired = false;
     leadForm.addEventListener('focusin', function() {
       if (!leadFormStartFired) {
         leadFormStartFired = true;
         if (typeof gtag === 'function') {
           gtag('event', 'form_start', { event_category: 'funnel', form_id: 'lead-form' });
+          // Antes salía al pulsar "Empezar la reclamación"; ahora, al empezar a rellenar
+          gtag('event', 'mandato_inicio', {
+            flight_number: flightNumber,
+            flight_date: dateStr,
+            airline: result.airline ? result.airline.code : '',
+            compensation_est: comp.estimated
+          });
         }
       }
     });
@@ -486,13 +489,15 @@
       var issue = document.getElementById('lead-issue');
       var consent = document.getElementById('lead-consent');
       var valid = true;
+      var firstInvalid = null;
 
       [name, email, issue].forEach(function(field) {
         var err = field.closest('.form-group').querySelector('.form-error');
         if (!field.value || !field.value.trim()) {
           field.style.borderColor = 'var(--color-error)';
-          if (err) err.textContent = 'Campo obligatorio';
+          if (err) err.textContent = field === issue ? 'Elige qué pasó con el vuelo' : 'Campo obligatorio';
           valid = false;
+          if (!firstInvalid) firstInvalid = field === issue ? issueBtns[0] : field;
         } else {
           field.style.borderColor = '';
           if (err) err.textContent = '';
@@ -504,6 +509,7 @@
         var err = email.closest('.form-group').querySelector('.form-error');
         if (err) err.textContent = 'Introduce un email válido';
         valid = false;
+        if (!firstInvalid) firstInvalid = email;
       }
 
       // Móvil opcional: solo dígitos (y + al principio), entre 9 y 15 cifras
@@ -514,20 +520,28 @@
         var perr = phone.closest('.form-group').querySelector('.form-error');
         if (perr) perr.textContent = 'Revisa el número (o déjalo en blanco)';
         valid = false;
+        if (!firstInvalid) firstInvalid = phone;
       } else if (phone) {
         phone.style.borderColor = '';
         var perr2 = phone.closest('.form-group').querySelector('.form-error');
         if (perr2) perr2.textContent = '';
       }
 
+      var consentErr = document.getElementById('lead-consent-error');
       if (!consent.checked) {
         consent.closest('.v-lead__checkbox').style.color = 'var(--color-error)';
+        consentErr.textContent = 'Marca la casilla para poder enviarlo';
         valid = false;
+        if (!firstInvalid) firstInvalid = consent;
       } else {
         consent.closest('.v-lead__checkbox').style.color = '';
+        consentErr.textContent = '';
       }
 
-      if (!valid) return;
+      if (!valid) {
+        firstInvalid.focus();
+        return;
+      }
 
       // Collect lead data
       var refParam = new URLSearchParams(window.location.search).get('ref') || '';
