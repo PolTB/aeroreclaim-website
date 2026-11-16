@@ -91,6 +91,60 @@
     return 'organic';
   }
 
+  // ===== CONTADOR DEL EMBUDO (sin cookies) =====
+  // Cuenta visitas que entran en la web, personas que empiezan a comprobar su vuelo y
+  // formularios enviados, por origen (anuncio, buscador, agencia...). Solo envía el evento y
+  // el origen: ni cookies, ni identificador, ni datos de la persona. Por eso cuenta también a
+  // quien rechaza las cookies (Google Analytics no lo ve). Lo lee el CEO con
+  // node gas/visitas-agencias/leer.js --embudo (repo del CEO, mejora M23 del 16/11/2026).
+  var CONTADOR_URL = 'https://script.google.com/macros/s/AKfycbw936kOh6PlHXBsD5gKF4I27TcrfDzWKGZHwcKTvJ3rWYFzqx0sqG8qz0rj02HeZKmC7w/exec';
+
+  function origenEmbudo() {
+    try {
+      if (sessionStorage.getItem('aeroreclaim_ref')) return 'agencia';
+      var utmRaw = sessionStorage.getItem('aeroreclaim_utm');
+      if (utmRaw) {
+        var u = JSON.parse(utmRaw) || {};
+        var s = String(u.src || '').toLowerCase();
+        var m = String(u.med || '').toLowerCase();
+        var c = String(u.cam || '').toLowerCase();
+        if (s === 'prueba') return 'prueba'; // pruebas internas: leer.js no las suma
+        if (s === 'bing') return 'bing';
+        if (s === 'google' && (m === 'demandgen' || c.indexOf('demandgen') >= 0)) return 'demandgen';
+        if (s === 'google' && m === 'cpc') return 'google-search';
+        if (/instagram|facebook|twitter|^x$|tiktok|linkedin|whatsapp/.test(s)) return 'social';
+        return 'utm-otro';
+      }
+      if (sessionStorage.getItem('aeroreclaim_gads')) return 'google-ads';
+      var referrer = sessionStorage.getItem('aeroreclaim_referrer');
+      if (referrer) {
+        var h = new URL(referrer).hostname;
+        if (/chatgpt|openai|perplexity|copilot|gemini|claude\.ai/.test(h)) return 'ia';
+        if (/google\.|bing\.|duckduckgo|yahoo\.|ecosia|qwant|brave/.test(h)) return 'organico';
+        if (/instagram|facebook|t\.co$|x\.com|twitter|linkedin|tiktok|whatsapp/.test(h)) return 'social';
+        return 'otra-web';
+      }
+    } catch(e) {}
+    return 'directo';
+  }
+
+  function contarEmbudo(evento) {
+    try {
+      if (/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent || '')) return;
+      fetch(CONTADOR_URL + '?e=' + evento + '&o=' + encodeURIComponent(origenEmbudo()), { mode: 'no-cors', keepalive: true });
+    } catch(e) {}
+  }
+
+  // Visita = entrada a la web desde fuera (no cada página ni cada recarga).
+  (function() {
+    try {
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      if (nav && nav.type === 'reload') return;
+      if (document.referrer && document.referrer.indexOf('aeroreclaim.com') >= 0) return;
+      contarEmbudo('visita');
+    } catch(e) {}
+  })();
+
   // ===== TEMA =====
   // La web tiene un único tema claro (revisión de marca 10/2026).
   document.documentElement.setAttribute('data-theme', 'light');
@@ -587,6 +641,7 @@
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formBody
         }).then(function() {
+          contarEmbudo('formulario');
           if (typeof gtag === 'function') {
             gtag('event', 'lead_capturado', {
               event_category: 'formulario',
@@ -648,6 +703,7 @@
     form.addEventListener('focusin', function() {
       if (!formStartFired) {
         formStartFired = true;
+        contarEmbudo('comprobar');
         if (typeof gtag === 'function') {
           gtag('event', 'validador_inicio', { form_id: formId });
         }
