@@ -336,7 +336,19 @@
             </tr>
           </tbody>
         </table>
-      <p><strong>Recuento anónimo de visitas (sin cookies):</strong> además, contamos de forma anónima cuántas personas entran en la web, cuántas empiezan a comprobar su vuelo y cuántas envían el formulario, y de dónde llegan (por ejemplo, un anuncio, un buscador o una agencia colaboradora). Este recuento no instala cookies ni recoge ningún dato que le identifique: solo suma una unidad al total del día. Por eso funciona aunque rechace las cookies.</p>
+      <p><strong>Recuento anónimo de visitas (sin cookies):</strong> además, contamos de forma agregada cuántas personas entran en la web, cuántas empiezan a comprobar su vuelo y cuántas envían el formulario, y de dónde llegan (por ejemplo, un anuncio, un buscador o una agencia colaboradora). Para saber el origen, la web lee el dato de procedencia que guarda en su navegador durante la visita (se borra al cerrar la pestaña) y envía solo el paso y el origen a un servidor de Google (Apps Script) que trabaja por cuenta nuestra. Como en cualquier conexión, ese servidor recibe su dirección IP, pero no la guardamos ni la asociamos a nada: solo se suma una unidad al total del día. No instala cookies y funciona aunque las rechace. Si no quiere que contemos sus visitas, pulse el botón de abajo o active en su navegador la señal Global Privacy Control.</p>
+        <p><button type="button" id="no-contar" style="padding:8px 14px;border-radius:8px;border:1px solid #14224A;background:#fff;color:#14224A;font-weight:600;cursor:pointer">No contar mis visitas</button> <span id="no-contar-estado" role="status"></span></p>
+        <script>
+          (function () {
+            var b = document.getElementById('no-contar'), e = document.getElementById('no-contar-estado');
+            function ya() { try { return !!localStorage.getItem('aeroreclaim_no_contar'); } catch (x) { return false; } }
+            if (ya()) { e.textContent = 'Hecho: en este navegador no contamos sus visitas.'; }
+            b.addEventListener('click', function () {
+              try { localStorage.setItem('aeroreclaim_no_contar', '1'); e.textContent = 'Hecho: en este navegador no contamos sus visitas.'; }
+              catch (x) { e.textContent = 'Su navegador no permite guardar la preferencia; active Global Privacy Control.'; }
+            });
+          })();
+        </script>
         </section>
 
       <section id="base-legal">

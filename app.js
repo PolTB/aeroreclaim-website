@@ -130,6 +130,9 @@
 
   function contarEmbudo(evento) {
     try {
+      // Quien no quiere ser contado: señal Global Privacy Control o el botón de la política de cookies.
+      if (navigator.globalPrivacyControl) return;
+      try { if (localStorage.getItem('aeroreclaim_no_contar')) return; } catch(e) {}
       if (/bot|crawl|spider|lighthouse|headless/i.test(navigator.userAgent || '')) return;
       fetch(CONTADOR_URL + '?e=' + evento + '&o=' + encodeURIComponent(origenEmbudo()), { mode: 'no-cors', keepalive: true });
     } catch(e) {}
