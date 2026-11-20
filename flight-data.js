@@ -12,6 +12,7 @@ AERORECLAIM.airlines = {
   "I2": { name: "Iberia Express", country: "ES", eu: true },
   "YW": { name: "Air Nostrum", country: "ES", eu: true },
   "EB": { name: "Wamos Air", country: "ES", eu: true },
+  "PU": { name: "Plus Ultra", country: "ES", eu: true },
   // Alemania
   "LH": { name: "Lufthansa", country: "DE", eu: true },
   "EW": { name: "Eurowings", country: "DE", eu: true },
@@ -307,6 +308,10 @@ AERORECLAIM.airports = {
 // Mapeo parcial: código de vuelo prefix → rutas frecuentes
 // Se usa para sugerir ruta cuando no tenemos datos reales del vuelo
 AERORECLAIM.knownRoutes = {
+  "PU": {
+    hubs: ["MAD"],
+    commonDest: ["LIM", "EZE"]
+  },
   "IB": {
     hubs: ["MAD"],
     commonDest: ["BCN", "LHR", "CDG", "FCO", "MXP", "LIS", "JFK", "MIA", "BOG", "MEX", "GRU", "EZE", "PMI", "AMS", "FRA"]
