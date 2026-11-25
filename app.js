@@ -38,6 +38,12 @@
       try { sessionStorage.setItem('aeroreclaim_utm', JSON.stringify(utmData)); } catch(e) {}
     }
 
+    // 2a. Página por la que entró a la web (solo la ruta, sin parámetros): separa la campaña
+    //     de Plus Ultra (/plus-ultra/) del resto de anuncios en el contador del embudo (M31).
+    try {
+      if (!sessionStorage.getItem('aeroreclaim_entrada')) sessionStorage.setItem('aeroreclaim_entrada', window.location.pathname);
+    } catch(e) {}
+
     // 2b. Clic en un anuncio de Google Ads (autoetiquetado: gclid, o gbraid/wbraid en iOS).
     //     Solo se guarda que la visita vino de un anuncio, nunca el identificador del clic.
     if (params.get('gclid') || params.get('gbraid') || params.get('wbraid')) {
@@ -101,6 +107,8 @@
 
   function origenEmbudo() {
     try {
+      var entrada = sessionStorage.getItem('aeroreclaim_entrada') || '';
+      var esPlusUltra = entrada.indexOf('/plus-ultra') === 0;
       if (sessionStorage.getItem('aeroreclaim_ref')) return 'agencia';
       var utmRaw = sessionStorage.getItem('aeroreclaim_utm');
       if (utmRaw) {
@@ -111,11 +119,11 @@
         if (s === 'prueba') return 'prueba'; // pruebas internas: leer.js no las suma
         if (s === 'bing') return 'bing';
         if (s === 'google' && (m === 'demandgen' || c.indexOf('demandgen') >= 0)) return 'demandgen';
-        if (s === 'google' && m === 'cpc') return 'google-search';
+        if (s === 'google' && m === 'cpc') return (esPlusUltra || c.indexOf('plus') >= 0) ? 'google-plusultra' : 'google-search';
         if (/instagram|facebook|twitter|^x$|tiktok|linkedin|whatsapp/.test(s)) return 'social';
         return 'utm-otro';
       }
-      if (sessionStorage.getItem('aeroreclaim_gads')) return 'google-ads';
+      if (sessionStorage.getItem('aeroreclaim_gads')) return esPlusUltra ? 'google-plusultra' : 'google-ads';
       var referrer = sessionStorage.getItem('aeroreclaim_referrer');
       if (referrer) {
         var h = new URL(referrer).hostname;
@@ -147,6 +155,18 @@
       contarEmbudo('visita');
     } catch(e) {}
   })();
+
+  // Clic en cualquier enlace a WhatsApp (wa.me o api.whatsapp.com): se cuenta una vez por sesión,
+  // como comprobar, para saber de qué origen llegan los que escriben por WhatsApp (M31, 25/11/2026).
+  document.addEventListener('click', function(ev) {
+    try {
+      var a = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+      if (!a || !/^https?:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(a.href)) return;
+      if (sessionStorage.getItem('aeroreclaim_wa_contado')) return;
+      sessionStorage.setItem('aeroreclaim_wa_contado', '1');
+      contarEmbudo('whatsapp');
+    } catch(e) {}
+  }, true);
 
   // ===== TEMA =====
   // La web tiene un único tema claro (revisión de marca 10/2026).
