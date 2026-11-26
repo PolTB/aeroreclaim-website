@@ -65,7 +65,7 @@ var AERORECLAIM = AERORECLAIM || {};
     return {
       valid: true,
       date: date,
-      daysAgo: Math.floor((now - date) / (1000 * 60 * 60 * 24)),
+      daysAgo: Math.round((now - date) / (1000 * 60 * 60 * 24)),
       withinYear: (now - date) < (365.25 * 24 * 60 * 60 * 1000)
     };
   }

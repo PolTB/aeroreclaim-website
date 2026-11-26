@@ -363,6 +363,10 @@
       : 'El Reglamento se aplica si el vuelo salió de un aeropuerto de la UE.';
 
     var urgencyHtml = '';
+    // Vuelo de hoy o de ayer: puede que aún no haya aterrizado (mejora M29, 26/11/2026). Sin decir el límite de horas.
+    if (dateInfo.daysAgo <= 1) {
+      urgencyHtml = '<p class="v-result__urgency">Si tu vuelo aún no ha aterrizado o acaba de llegar, déjanos tus datos igualmente: miramos la hora real de llegada y te decimos si tienes derecho.</p>';
+    }
     if (result.reasons.indexOf('close_to_expiry') >= 0) {
       urgencyHtml = '<p class="v-result__urgency">Tu vuelo está cerca del plazo de 5 años. Conviene reclamarlo cuanto antes.</p>';
     }
